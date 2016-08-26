@@ -51,17 +51,6 @@ gulp.task('css', function(){
 	.pipe(gulp.dest(config.paths.dist + '/css'));
 })
 
-//transform and bundle necessary ejs into plain js
-// gulp.task('js', function(){
-// 	browserify(config.paths.mainJs)
-// 	.transform(reactify)
-// 	.bundle()
-// 	.on('error', console.error.bind(console))
-// 	.pipe(source('bundle.js'))
-// 	.pipe(gulp.dest(config.paths.dist + '/scripts'))
-// 	.pipe(connect.reload);
-// });
-
 gulp.task('js', function(){
 	browserify(config.paths.mainJs)
 		.transform(reactify)
