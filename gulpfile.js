@@ -32,8 +32,11 @@ gulp.task('connect', function(){
 	});
 });
 
-//I'm leaving out the open task, since I found that annoying last time.
-
+//open new tab in default browser. 
+gulp.task('open', ['connect'], function(){
+	gulp.src('dist/index.html')
+		.pipe(open({url: config.devBaseUrl + ':' + config.port + '/'}));
+});
 
 //move html files to dist (no transforms necessary)
 gulp.task('html', function(){
@@ -42,21 +45,38 @@ gulp.task('html', function(){
 	.pipe(connect.reload()); //reload if html has chanced
 });
 
+gulp.task('css', function(){
+	gulp.src(config.paths.css)
+	.pipe(concat('bundle.css'))
+	.pipe(gulp.dest(config.paths.dist + '/css'));
+})
+
 //transform and bundle necessary ejs into plain js
+// gulp.task('js', function(){
+// 	browserify(config.paths.mainJs)
+// 	.transform(reactify)
+// 	.bundle()
+// 	.on('error', console.error.bind(console))
+// 	.pipe(source('bundle.js'))
+// 	.pipe(gulp.dest(config.paths.dist + '/scripts'))
+// 	.pipe(connect.reload);
+// });
+
 gulp.task('js', function(){
 	browserify(config.paths.mainJs)
-	.transform(reactify)
-	.bundle()
-	.on('error', console.error.bind(console))
-	.pipe(source('bundle.js'))
-	.pipe(gulp.dest(config.paths.dist + '/scripts'))
-	.pipe(connect.reload);
+		.transform(reactify)
+		.bundle()
+		.on('error', console.error.bind(console))
+		.pipe(source('bundle.js'))
+		.pipe(gulp.dest(config.paths.dist + '/scripts'))
+		.pipe(connect.reload());
 });
+
 
 gulp.task('watch', function(){
 	gulp.watch(config.paths.html, ['html']);
 	gulp.watch(config.paths.js, ['js']);
 });
 
-gulp.task('default', ['html', 'css', 'js','watch']);
+gulp.task('default', ['html', 'css', 'js','open','watch']);
 
