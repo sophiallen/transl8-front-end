@@ -1,0 +1,26 @@
+{
+  "name": "transl8_front_end",
+  "version": "1.0.0",
+  "description": "front end for transl8, allows users to set up accounts and default translation preferences.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sophia Allen",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "browserify": "^13.1.0",
+    "express": "^4.14.0",
+    "flux": "^2.1.1",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-connect": "^5.0.0",
+    "gulp-open": "^2.0.0",
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1",
+    "react-router": "^2.7.0",
+    "reactify": "^1.1.1",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
