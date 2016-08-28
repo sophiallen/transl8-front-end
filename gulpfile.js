@@ -16,6 +16,7 @@ var config = {
 		js: './src/**/*.js',
 		css: [
 			'node_modules/bootstrap/dist/css/bootstrap.min.css', 
+			'./src/css/*.css'
 		],
 		mainJs: './src/main.js',
 		dist: './dist'
@@ -39,7 +40,7 @@ gulp.task('open', ['connect'], function(){
 });
 
 //move html files to dist (no transforms necessary)
-gulp.task('html', function(){
+gulp.task('html',['css'], function(){
 	gulp.src(config.paths.html)
 	.pipe(gulp.dest(config.paths.dist))
 	.pipe(connect.reload()); //reload if html has chanced
@@ -65,6 +66,7 @@ gulp.task('js', function(){
 gulp.task('watch', function(){
 	gulp.watch(config.paths.html, ['html']);
 	gulp.watch(config.paths.js, ['js']);
+	gulp.watch(config.paths.css, ['css']);
 });
 
 gulp.task('default', ['html', 'css', 'js','open','watch']);

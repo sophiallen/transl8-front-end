@@ -4,8 +4,8 @@ var React = require('react');
 
 var Header = React.createClass({
 	render: function(){
-		return (<div className="mainHeader">
-				<h1>Hello from Transl8!</h1>
+		return (<div className="jumbotron">
+				<h1>Transl8 <small>Smart & Simple SMS Translation</small></h1>
 			</div>);
 	}
 });
