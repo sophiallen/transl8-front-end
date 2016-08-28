@@ -20747,7 +20747,7 @@ var React = require('react');
 var Header = React.createClass({displayName: "Header",
 	render: function(){
 		return (React.createElement("div", {className: "jumbotron"}, 
-				React.createElement("h1", null, "Transl8 ", React.createElement("small", null, "Smart & Simple SMS Translation"))
+				React.createElement("h1", null, "Dial.ect ", React.createElement("small", null, "Smart & Simple SMS Translation"))
 			));
 	}
 });
