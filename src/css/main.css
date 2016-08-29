@@ -19,3 +19,8 @@ main,  {
 	padding: 1.5em;
 	padding-bottom: .75em;
 }
+
+.jumbotron a , .jumbotron a:hover {
+	text-decoration: none;
+	color: #333;
+}

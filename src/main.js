@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var Header = require('./components/Header.js');
+var HomePage = require('./components/MainLayout.js');
+var routes = require('./router.js');
 
-ReactDOM.render(<Header/>, document.getElementById('app'));
+ReactDOM.render(routes, document.getElementById('app'));
