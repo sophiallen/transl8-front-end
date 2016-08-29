@@ -20743,18 +20743,43 @@ module.exports = require('./lib/React');
 'use strict';
 
 var React = require('react');
+var Navbar = require('./NavBar.js');
 
 var Header = React.createClass({displayName: "Header",
 	render: function(){
-		return (React.createElement("div", {className: "jumbotron"}, 
-				React.createElement("h1", null, "Dial.ect ", React.createElement("small", null, "Smart & Simple SMS Translation"))
-			));
+		return (
+			React.createElement("div", null, 
+				React.createElement("div", {className: "jumbotron"}, 
+					React.createElement("h1", null, "Transl8r")
+				), 
+				React.createElement(Navbar, null)
+			)
+			);
 	}
 });
 
 module.exports = Header;
 
-},{"react":171}],173:[function(require,module,exports){
+},{"./NavBar.js":173,"react":171}],173:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+module.exports = React.createClass({displayName: "exports",
+	render: function(){
+		return (
+			React.createElement("nav", {className: "navbar navbar-inverse"}, 
+				React.createElement("div", {className: "container-fluid"}, 
+					React.createElement("ul", {className: "nav navbar-nav"}, 
+						React.createElement("li", null, React.createElement("a", {href: "/#home"}, "Home")), 
+						React.createElement("li", null, React.createElement("a", {href: "/#about"}, "About")), 
+						React.createElement("li", null, React.createElement("a", {href: "/#register"}, "Register"))
+					)
+				)
+			));
+	}
+});
+},{"react":171}],174:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -20762,4 +20787,4 @@ var Header = require('./components/Header.js');
 
 ReactDOM.render(React.createElement(Header, null), document.getElementById('app'));
 
-},{"./components/Header.js":172,"react":171,"react-dom":2}]},{},[173]);
+},{"./components/Header.js":172,"react":171,"react-dom":2}]},{},[174]);
