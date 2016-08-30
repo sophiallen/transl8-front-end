@@ -26122,7 +26122,7 @@ module.exports = React.createClass({displayName: "exports",
 	render: function(){
 		return (
 			React.createElement("div", null, 
-				React.createElement("h1", {className: "page-header"}, "About"), 
+				React.createElement("h1", {className: "page-header"}, "About The App"), 
 				React.createElement("h4", null, "About Page Here!"), 
 				React.createElement("p", null, React.createElement(Link, {to: "about/test_message"}, "Try a param"))
 			)
@@ -26150,24 +26150,36 @@ var HomePage = React.createClass({displayName: "HomePage",
 
 module.exports = HomePage;
 
-},{"./NavBar.js":240,"react":234,"react-router":32}],237:[function(require,module,exports){
-
-},{}],238:[function(require,module,exports){
+},{"./NavBar.js":239,"react":234,"react-router":32}],237:[function(require,module,exports){
 var React = require('react');
-var Header = require('./Header.js');
-
+var Link = require('react-router').Link;
 module.exports = React.createClass({displayName: "exports",
 	render: function(){
 		return (
 				React.createElement("div", null, 
 					React.createElement("h1", {className: "page-header"}, "Welcome to Transl8r"), 
-					React.createElement("h4", null, "We're making mobile translation more accessible, one text at a time. Let's get started!")
+					React.createElement("h4", null, "We're making mobile translation more accessible, one text at a time. ", React.createElement(Link, {to: "/login"}, "Let's get started!")), 
+					
+					React.createElement("div", {className: "row"}, 
+						React.createElement("div", {className: "col-md-4"}, 
+							React.createElement("h4", null, "Try out a demo!"), 
+							React.createElement("span", null, "Pretty picture will go here")
+						), 
+						React.createElement("div", {className: "col-md-4"}, 
+							React.createElement("h4", null, "Our Goal"), 
+							React.createElement("h5", null, "We want to make translation easier and more accessible for people on the go, regardless of their ability to own a smartphone. Our app makes use of text-messaging to allow people to get quick translations without needing an electronic interpreter.")
+						), 
+						React.createElement("div", {className: "col-md-4"}, 
+							React.createElement("h4", null, "Our Approach"), 
+							React.createElement("h5", null, "We use the power and simplicity of text messaging to allow you to access powerful translation engines such as Google Translate and Yandex. You can either specify language preferences within your text, or set up a user account ", React.createElement(Link, {to: "/login"}, "here"), " to create specialized preferences.")
+						)
+					)
 				)
 		)
 	}
 });
 
-},{"./Header.js":237,"react":234}],239:[function(require,module,exports){
+},{"react":234,"react-router":32}],238:[function(require,module,exports){
 var React = require('react');
 
 module.exports = React.createClass({displayName: "exports",
@@ -26181,7 +26193,7 @@ module.exports = React.createClass({displayName: "exports",
 	}
 });
 
-},{"react":234}],240:[function(require,module,exports){
+},{"react":234}],239:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -26204,7 +26216,7 @@ module.exports = React.createClass({displayName: "exports",
 			));
 	}
 });
-},{"react":234,"react-router":32}],241:[function(require,module,exports){
+},{"react":234,"react-router":32}],240:[function(require,module,exports){
 var React = require('react');
 
 
@@ -26218,7 +26230,7 @@ module.exports = React.createClass({displayName: "exports",
 	}
 })
 
-},{"react":234}],242:[function(require,module,exports){
+},{"react":234}],241:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -26226,7 +26238,7 @@ var routes = require('./router.js');
 
 ReactDOM.render(routes, document.getElementById('app'));
 
-},{"./router.js":243,"react":234,"react-dom":2}],243:[function(require,module,exports){
+},{"./router.js":242,"react":234,"react-dom":2}],242:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
@@ -26238,7 +26250,7 @@ var IndexRoute = ReactRouter.IndexRoute;
 var App = require('./components/App.js');
 var Home   = require('./components/Home.js');
 var About = require('./components/About.js');
-var LoginForm = require('./components/LoginForm.js');
+var LoginForm = require('./components/Login.js');
 var ParamTest = require('./components/ParamSample.js');
 
 var routes = (
@@ -26254,4 +26266,4 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/About.js":235,"./components/App.js":236,"./components/Home.js":238,"./components/LoginForm.js":239,"./components/ParamSample.js":241,"react":234,"react-dom":2,"react-router":32}]},{},[242]);
+},{"./components/About.js":235,"./components/App.js":236,"./components/Home.js":237,"./components/Login.js":238,"./components/ParamSample.js":240,"react":234,"react-dom":2,"react-router":32}]},{},[241]);
