@@ -26116,77 +26116,33 @@ module.exports = require('./lib/React');
 
 },{"./lib/React":91}],235:[function(require,module,exports){
 var React = require('react');
-
-module.exports = React.createClass({displayName: "exports",
-	render: function(){
-		return (
-			React.createElement("div", null, 
-				React.createElement("h4", null, "About Page Here!")
-			)
-		)
-	}
-});
-
-},{"react":234}],236:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var Navbar = require('./NavBar.js');
 var Link = require('react-router').Link;
 
-var Header = React.createClass({displayName: "Header",
-	render: function(){
-		return (
-			React.createElement("div", null, 
-				React.createElement("div", {className: "jumbotron"}, 
-					React.createElement(Link, {to: "/"}, React.createElement("h1", null, "Transl8r"))
-				), 
-				React.createElement(Navbar, null)
-			)
-			);
-	}
-});
-
-module.exports = Header;
-
-},{"./NavBar.js":240,"react":234,"react-router":32}],237:[function(require,module,exports){
-var React = require('react');
-
 module.exports = React.createClass({displayName: "exports",
 	render: function(){
 		return (
 			React.createElement("div", null, 
-				React.createElement("h4", null, "Welcome goes here!")
+				React.createElement("h1", {className: "page-header"}, "About"), 
+				React.createElement("h4", null, "About Page Here!"), 
+				React.createElement("p", null, React.createElement(Link, {to: "about/test_message"}, "Try a param"))
 			)
-		)
+		);
 	}
 });
 
-},{"react":234}],238:[function(require,module,exports){
+},{"react":234,"react-router":32}],236:[function(require,module,exports){
 var React = require('react');
-
-module.exports = React.createClass({displayName: "exports",
-	render: function(){
-		return (
-			React.createElement("div", null, 
-				React.createElement("h4", null, "Login form goes here!")
-			)
-		)
-	}
-});
-
-},{"react":234}],239:[function(require,module,exports){
-var React = require('react');
-var Header = require('./Header.js');
+var NavBar = require('./NavBar.js');
 var Link = require('react-router').Link;
 
 var HomePage = React.createClass({displayName: "HomePage",
 	render: function(){
 		return (
 			React.createElement("div", null, 
-				React.createElement(Header, null), 
-				
-				this.props.children
+				React.createElement(NavBar, null), 
+				React.createElement("div", {className: "pageContent"}, 
+					this.props.children
+				)
 			)
 			);
 	}
@@ -26194,7 +26150,38 @@ var HomePage = React.createClass({displayName: "HomePage",
 
 module.exports = HomePage;
 
-},{"./Header.js":236,"react":234,"react-router":32}],240:[function(require,module,exports){
+},{"./NavBar.js":240,"react":234,"react-router":32}],237:[function(require,module,exports){
+
+},{}],238:[function(require,module,exports){
+var React = require('react');
+var Header = require('./Header.js');
+
+module.exports = React.createClass({displayName: "exports",
+	render: function(){
+		return (
+				React.createElement("div", null, 
+					React.createElement("h1", {className: "page-header"}, "Welcome to Transl8r"), 
+					React.createElement("h4", null, "We're making mobile translation more accessible, one text at a time. Let's get started!")
+				)
+		)
+	}
+});
+
+},{"./Header.js":237,"react":234}],239:[function(require,module,exports){
+var React = require('react');
+
+module.exports = React.createClass({displayName: "exports",
+	render: function(){
+		return (
+			React.createElement("div", null, 
+				React.createElement("h1", {className: "page-header"}, "Account Login"), 
+				React.createElement("h4", null, "Login form goes here!")
+			)
+		)
+	}
+});
+
+},{"react":234}],240:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -26203,7 +26190,10 @@ var Link = require('react-router').Link;
 module.exports = React.createClass({displayName: "exports",
 	render: function(){
 		return (
-			React.createElement("nav", {className: "navbar navbar-inverse"}, 
+			React.createElement("nav", {className: "navbar navbar-inverse navbar-fixed-top"}, 
+				React.createElement("div", {className: "navbar-header"}, 
+					React.createElement(Link, {to: "/", className: "navbar-brand"}, "Transl8r")
+				), 
 				React.createElement("div", {className: "container-fluid"}, 
 					React.createElement("ul", {className: "nav navbar-nav"}, 
 						React.createElement("li", null, React.createElement(Link, {to: "/"}, "Home")), 
@@ -26216,32 +26206,47 @@ module.exports = React.createClass({displayName: "exports",
 });
 },{"react":234,"react-router":32}],241:[function(require,module,exports){
 var React = require('react');
+
+
+module.exports = React.createClass({displayName: "exports",
+	render: function(){
+		return (
+			React.createElement("div", null, 
+				React.createElement("h2", null, this.props.params.testparam)
+			)
+		)
+	}
+})
+
+},{"react":234}],242:[function(require,module,exports){
+var React = require('react');
 var ReactDOM = require('react-dom');
 
-var HomePage = require('./components/MainLayout.js');
 var routes = require('./router.js');
 
 ReactDOM.render(routes, document.getElementById('app'));
 
-},{"./components/MainLayout.js":239,"./router.js":242,"react":234,"react-dom":2}],242:[function(require,module,exports){
+},{"./router.js":243,"react":234,"react-dom":2}],243:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Router = require('react-router').Router;
-var Route = require('react-router').Route;
-var hashHistory = require('react-router').hashHistory;
-var IndexRoute = require('react-router').IndexRoute;
-//var Link  = require('react-router').Link;
+var ReactRouter = require('react-router');
+var Router = ReactRouter.Router;
+var Route = ReactRouter.Route;
+var hashHistory = ReactRouter.hashHistory;
+var IndexRoute = ReactRouter.IndexRoute;
 
-var App = require('./components/MainLayout.js');
+var App = require('./components/App.js');
 var Home   = require('./components/Home.js');
 var About = require('./components/About.js');
 var LoginForm = require('./components/LoginForm.js');
+var ParamTest = require('./components/ParamSample.js');
 
 var routes = (
 		React.createElement(Router, {history: hashHistory}, 
 			React.createElement(Route, {path: "/", component: App}, 
 				React.createElement(IndexRoute, {component: Home}), 
 				React.createElement(Route, {path: "/about", component: About}), 
+				React.createElement(Route, {path: "/about/:testparam", component: ParamTest}), 
 				React.createElement(Route, {path: "/login", component: LoginForm})
 			)
 		)
@@ -26249,4 +26254,4 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/About.js":235,"./components/Home.js":237,"./components/LoginForm.js":238,"./components/MainLayout.js":239,"react":234,"react-dom":2,"react-router":32}]},{},[241]);
+},{"./components/About.js":235,"./components/App.js":236,"./components/Home.js":238,"./components/LoginForm.js":239,"./components/ParamSample.js":241,"react":234,"react-dom":2,"react-router":32}]},{},[242]);

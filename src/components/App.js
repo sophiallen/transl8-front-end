@@ -1,14 +1,15 @@
 var React = require('react');
-var Header = require('./Header.js');
+var NavBar = require('./NavBar.js');
 var Link = require('react-router').Link;
 
 var HomePage = React.createClass({
 	render: function(){
 		return (
 			<div>
-				<Header />
-				
-				{this.props.children}
+				<NavBar />
+				<div className="pageContent">
+					{this.props.children}
+				</div>
 			</div>
 			);
 	}
