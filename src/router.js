@@ -6,11 +6,14 @@ var Route = ReactRouter.Route;
 var hashHistory = ReactRouter.hashHistory;
 var IndexRoute = ReactRouter.IndexRoute;
 
+var authenticate = require('./utils/authenticate.js');
+
 var App = require('./components/App.js');
 var Home   = require('./components/Home.js');
 var About = require('./components/About.js');
 var LoginForm = require('./components/Login.js');
 var ParamTest = require('./components/ParamSample.js');
+var Register = require('./components/Register.js');
 
 var routes = (
 		<Router history={hashHistory}>
@@ -19,6 +22,7 @@ var routes = (
 				<Route path="/about" component={About} />
 				<Route path="/about/:testparam" component={ParamTest} />
 				<Route path="/login" component={LoginForm} />
+				<Route path="/register" component={Register} />
 			</Route>
 		</Router>
 	);
