@@ -16,6 +16,10 @@ module.exports = React.createClass({
 						<li><Link to="/about">About</Link></li>
 						<li><Link to="/login">Login</Link></li>
 					</ul>
+					<ul className="nav navbar-nav navbar-right">
+						<li><Link to="/register"><button className="btn btn-primary">Register</button></Link></li>
+						<li><Link to="/login"><button className="btn btn-primary">Log In</button></Link></li>
+					</ul>
 				</div>
 			</nav>);
 	}

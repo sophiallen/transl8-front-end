@@ -26810,6 +26810,10 @@ module.exports = React.createClass({displayName: "exports",
 						React.createElement("li", null, React.createElement(Link, {to: "/"}, "Home")), 
 						React.createElement("li", null, React.createElement(Link, {to: "/about"}, "About")), 
 						React.createElement("li", null, React.createElement(Link, {to: "/login"}, "Login"))
+					), 
+					React.createElement("ul", {className: "nav navbar-nav navbar-right"}, 
+						React.createElement("li", null, React.createElement(Link, {to: "/register"}, React.createElement("button", {className: "btn btn-primary"}, "Register"))), 
+						React.createElement("li", null, React.createElement(Link, {to: "/login"}, React.createElement("button", {className: "btn btn-primary"}, "Log In")))
 					)
 				)
 			));
@@ -26904,7 +26908,8 @@ var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
-var hashHistory = ReactRouter.hashHistory;
+//var hashHistory = ReactRouter.hashHistory;
+var browserHistory = ReactRouter.browserHistory;
 var IndexRoute = ReactRouter.IndexRoute;
 
 var authenticate = require('./utils/authenticate.js');
@@ -26917,7 +26922,7 @@ var ParamTest = require('./components/ParamSample.js');
 var Register = require('./components/Register.js');
 
 var routes = (
-		React.createElement(Router, {history: hashHistory}, 
+		React.createElement(Router, {history: browserHistory}, 
 			React.createElement(Route, {path: "/", component: App}, 
 				React.createElement(IndexRoute, {component: Home}), 
 				React.createElement(Route, {path: "/about", component: About}), 
