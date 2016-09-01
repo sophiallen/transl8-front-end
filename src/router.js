@@ -15,7 +15,11 @@ var About = require('./components/About.js');
 var LoginForm = require('./components/Login.js');
 var ParamTest = require('./components/ParamSample.js');
 var Register = require('./components/Register.js');
+var Dashboard = require('./components/Dashboard.js');
 var NotFound = require('./components/NotFound.js');
+
+
+//TODO: params no longer working when not passed via link. 
 
 var routes = (
 		<Router history={browserHistory}>
@@ -25,6 +29,7 @@ var routes = (
 				<Route path="/about/:testparam" component={ParamTest} />
 				<Route path="/login" component={LoginForm} />
 				<Route path="/register" component={Register} />
+				<Route path="/dashboard" component={Dashboard} />
 				<Route path="*" component={NotFound} />
 			</Route>
 		</Router>
