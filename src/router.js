@@ -29,7 +29,7 @@ var routes = (
 				<Route path="/about/:testparam" component={ParamTest} />
 				<Route path="/login" component={LoginForm} />
 				<Route path="/register" component={Register} />
-				<Route path="/dashboard" component={Dashboard} />
+				<Route path="/dashboard" component={Dashboard} onEnter={authenticate}/>
 				<Route path="*" component={NotFound} />
 			</Route>
 		</Router>

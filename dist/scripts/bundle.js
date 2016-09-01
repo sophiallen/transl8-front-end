@@ -27009,7 +27009,7 @@ var routes = (
 				React.createElement(Route, {path: "/about/:testparam", component: ParamTest}), 
 				React.createElement(Route, {path: "/login", component: LoginForm}), 
 				React.createElement(Route, {path: "/register", component: Register}), 
-				React.createElement(Route, {path: "/dashboard", component: Dashboard}), 
+				React.createElement(Route, {path: "/dashboard", component: Dashboard, onEnter: authenticate}), 
 				React.createElement(Route, {path: "*", component: NotFound})
 			)
 		)
@@ -27026,13 +27026,17 @@ var config = require('./../../firebase.config.js');
 firebase.initializeApp(config);
 
 function requireAuth(nextState, replace){
+	var user = firebase.auth().currentUser;
 	if (null === firebase.auth().currentUser){
 		replace({
 			pathname: '/login',
 			state: {nextPathName: nextState.location.pathname}
 		});
+	} else {
+		console.log('current user: ' + user.email);
 	}
-}
+}	
+
 
 module.exports = requireAuth;
 
