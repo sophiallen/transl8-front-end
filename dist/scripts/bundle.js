@@ -26782,11 +26782,25 @@ module.exports = React.createClass({displayName: "exports",
 var React = require('react');
 
 module.exports = React.createClass({displayName: "exports",
+	handleSubmit: function(){
+		console.log('clicked submit');
+		
+	},
 	render: function(){
 		return (
 			React.createElement("div", null, 
 				React.createElement("h1", {className: "page-header"}, "Account Login"), 
-				React.createElement("h4", null, "Login form goes here!")
+				React.createElement("form", {onSubmit: this.handleSubmit}, 
+					React.createElement("div", {className: "form-group"}, 
+						React.createElement("label", null, "Email"), 
+						React.createElement("input", {className: "form-control", ref: "email", placeholder: "email"})
+					), 
+					React.createElement("div", {className: "form-group"}, 
+						React.createElement("label", null, "Password"), 
+						React.createElement("input", {type: "password", className: "form-control", ref: "pw", placeholder: "password"})
+					), 
+					React.createElement("button", {type: "submit", className: "btn btn-primary"}, "Register!")
+				)
 			)
 		)
 	}
