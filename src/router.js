@@ -15,6 +15,7 @@ var About = require('./components/About.js');
 var LoginForm = require('./components/Login.js');
 var ParamTest = require('./components/ParamSample.js');
 var Register = require('./components/Register.js');
+var NotFound = require('./components/NotFound.js');
 
 var routes = (
 		<Router history={browserHistory}>
@@ -24,6 +25,7 @@ var routes = (
 				<Route path="/about/:testparam" component={ParamTest} />
 				<Route path="/login" component={LoginForm} />
 				<Route path="/register" component={Register} />
+				<Route path="*" component={NotFound} />
 			</Route>
 		</Router>
 	);

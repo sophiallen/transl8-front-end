@@ -26822,6 +26822,22 @@ module.exports = React.createClass({displayName: "exports",
 },{"react":237,"react-router":35}],243:[function(require,module,exports){
 var React = require('react');
 
+var Link = require('react-router').Link;
+
+module.exports = React.createClass({displayName: "exports",
+	render: function(){
+		return (
+			React.createElement("div", null, 
+				React.createElement("h1", {className: "page-header"}, "Page Unavailable"), 
+				React.createElement("h3", null, "Sorry, looks like this page does not exist yet. Click ", React.createElement(Link, {to: "/"}, "here"), " to return to the home page.")
+			)
+		);
+	}
+})
+
+},{"react":237,"react-router":35}],244:[function(require,module,exports){
+var React = require('react');
+
 
 module.exports = React.createClass({displayName: "exports",
 	render: function(){
@@ -26833,7 +26849,7 @@ module.exports = React.createClass({displayName: "exports",
 	}
 })
 
-},{"react":237}],244:[function(require,module,exports){
+},{"react":237}],245:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 
@@ -26894,7 +26910,7 @@ var Register = React.createClass({displayName: "Register",
 
 module.exports = Register;
 
-},{"firebase":3,"react":237}],245:[function(require,module,exports){
+},{"firebase":3,"react":237}],246:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -26902,7 +26918,7 @@ var routes = require('./router.js');
 
 ReactDOM.render(routes, document.getElementById('app'));
 
-},{"./router.js":246,"react":237,"react-dom":5}],246:[function(require,module,exports){
+},{"./router.js":247,"react":237,"react-dom":5}],247:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
@@ -26920,6 +26936,7 @@ var About = require('./components/About.js');
 var LoginForm = require('./components/Login.js');
 var ParamTest = require('./components/ParamSample.js');
 var Register = require('./components/Register.js');
+var NotFound = require('./components/NotFound.js');
 
 var routes = (
 		React.createElement(Router, {history: browserHistory}, 
@@ -26928,14 +26945,15 @@ var routes = (
 				React.createElement(Route, {path: "/about", component: About}), 
 				React.createElement(Route, {path: "/about/:testparam", component: ParamTest}), 
 				React.createElement(Route, {path: "/login", component: LoginForm}), 
-				React.createElement(Route, {path: "/register", component: Register})
+				React.createElement(Route, {path: "/register", component: Register}), 
+				React.createElement(Route, {path: "*", component: NotFound})
 			)
 		)
 	);
 
 module.exports = routes;
 
-},{"./components/About.js":238,"./components/App.js":239,"./components/Home.js":240,"./components/Login.js":241,"./components/ParamSample.js":243,"./components/Register.js":244,"./utils/authenticate.js":247,"react":237,"react-dom":5,"react-router":35}],247:[function(require,module,exports){
+},{"./components/About.js":238,"./components/App.js":239,"./components/Home.js":240,"./components/Login.js":241,"./components/NotFound.js":243,"./components/ParamSample.js":244,"./components/Register.js":245,"./utils/authenticate.js":248,"react":237,"react-dom":5,"react-router":35}],248:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var config = require('./../../firebase.config.js');
@@ -26954,4 +26972,4 @@ function requireAuth(nextState, replace){
 
 module.exports = requireAuth;
 
-},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[245]);
+},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[246]);
