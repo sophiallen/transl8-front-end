@@ -1,12 +1,12 @@
 var React = require('react');
 var Link = require('react-router').Link;
+
 module.exports = React.createClass({
 	render: function(){
 		return (
 				<div>
 					<h1 className="page-header">Welcome to Transl8r</h1>
 					<h4>We're making mobile translation more accessible, one text at a time. <Link to="/login">Let's get started!</Link></h4>
-					
 					<div className="row">
 						<div className="col-md-4">
 							<h4>Try out a demo!</h4>

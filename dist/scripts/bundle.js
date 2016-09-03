@@ -26733,14 +26733,38 @@ module.exports = React.createClass({displayName: "exports",
 var React = require('react');
 var NavBar = require('./NavBar.js');
 var Link = require('react-router').Link;
+var firebase = require('firebase');
 
 var HomePage = React.createClass({displayName: "HomePage",
+	getInitialState: function(){
+		var user = firebase.auth().currentUser;
+		console.log('setting app initial state');
+		return {
+			loggedIn: (null !== user),
+			currentUser: user
+		}
+	},
+	componentWillMount: function(){
+		var that = this;
+		firebase.auth().onAuthStateChanged(firebaseUser => {
+			that.setState({
+				loggedIn: (null !== firebaseUser)
+			});
+
+			if (firebaseUser){
+				console.log('Logged IN: ' + firebaseUser.email);
+				that.setState({currentUser: firebaseUser});
+			} else {
+				console.log('No one logged in');
+			}
+		});
+	},
 	render: function(){
 		return (
 			React.createElement("div", null, 
-				React.createElement(NavBar, null), 
+				React.createElement(NavBar, {loggedIn: this.state.loggedIn}), 
 				React.createElement("div", {className: "pageContent"}, 
-					this.props.children
+					React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn})
 				)
 			)
 			);
@@ -26749,14 +26773,39 @@ var HomePage = React.createClass({displayName: "HomePage",
 
 module.exports = HomePage;
 
-},{"./NavBar.js":243,"react":237,"react-router":35}],240:[function(require,module,exports){
+},{"./NavBar.js":244,"firebase":3,"react":237,"react-router":35}],240:[function(require,module,exports){
 var React = require('react');
+var firebase = require('firebase');
 
 var dashboard = React.createClass({displayName: "dashboard",
+	contextTypes: { //allow access to router via context
+		router: React.PropTypes.object.isRequired
+	},
+	componentWillMount: function(){
+		//small optimization: check to see if redirected from login as check for login status.
+		var justLoggedIn = (this.props.location.state && this.props.location.state.loggedIn);
+
+		if (!this.props.loggedIn && !justLoggedIn) {
+			var thisRouter = this.context.router;
+
+			//check auth again in case of page refresh.
+			//TODO: maybe I can do this with onEnter via router? 
+			firebase.auth().onAuthStateChanged(firebaseUser => { 
+				if (firebaseUser === null){
+					//re-route to login page.
+					thisRouter.push({
+						pathname: '/login',
+						state: {fromPage: '/dashboard'}
+					});
+				}
+			});
+		} 
+	},
 	render: function(){
 		return (
 			React.createElement("div", null, 
-				React.createElement("h1", {className: "page-header"}, "User Dashboard")
+				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
+				React.createElement("h3", null, "User is ", this.props.loggedIn? 'logged in' : 'not logged in')
 			)
 		);
 	}
@@ -26764,16 +26813,16 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 module.exports = dashboard;
 
-},{"react":237}],241:[function(require,module,exports){
+},{"firebase":3,"react":237}],241:[function(require,module,exports){
 var React = require('react');
 var Link = require('react-router').Link;
+
 module.exports = React.createClass({displayName: "exports",
 	render: function(){
 		return (
 				React.createElement("div", null, 
 					React.createElement("h1", {className: "page-header"}, "Welcome to Transl8r"), 
 					React.createElement("h4", null, "We're making mobile translation more accessible, one text at a time. ", React.createElement(Link, {to: "/login"}, "Let's get started!")), 
-					
 					React.createElement("div", {className: "row"}, 
 						React.createElement("div", {className: "col-md-4"}, 
 							React.createElement("h4", null, "Try out a demo!"), 
@@ -26796,11 +26845,40 @@ module.exports = React.createClass({displayName: "exports",
 },{"react":237,"react-router":35}],242:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
+var Link = require('react-router').Link;
+
+module.exports = React.createClass({displayName: "exports",
+	contextTypes: {
+		router: React.PropTypes.object.isRequired
+	},
+	getInitialState: function(){
+		return {
+			error: false
+		}
+	},
+	componentDidMount: function(){
+		firebase.auth().signOut();
+		this.setState({loggedIn: false});
+	},
+	render: function(){
+		return (
+			React.createElement("div", null, 
+				React.createElement("h1", {className: "page-header"}, "Logged Out successfully")
+			)
+		);
+	} 
+});
+},{"firebase":3,"react":237,"react-router":35}],243:[function(require,module,exports){
+var React = require('react');
+var firebase = require('firebase');
 
 module.exports = React.createClass({displayName: "exports",
 
 	contextTypes: { //allow access to router via context
 		router: React.PropTypes.object.isRequired
+	},
+	componentWillMount: function(){
+		console.log('in login');
 	},
 	getInitialState: function(){
 		return {
@@ -26812,17 +26890,25 @@ module.exports = React.createClass({displayName: "exports",
 		var email = this.refs.email.value;
 		var pw = this.refs.pw.value;
 		var self = this;
-		var that = this;
 		var thisRouter = this.context.router;
 
 		firebase.auth().signInWithEmailAndPassword(email, pw)
 		.then(function(result){
 			var location = self.props.location;
-			if (location.state && location.state.nextPathname){
-				thisRouter.replace(location.state.nextPathname);
+
+			if (location.state && location.state.fromPage){
+				console.log('sensed redirect');
+
+				thisRouter.push({
+					pathname: location.state.fromPage,
+					state: {loggedIn: true}
+				});
+
 			} else {
-				thisRouter.replace('/dashboard'); //re-route to home page.
+				console.log('no redirect sensed, going to homepage');
+				thisRouter.push('/'); 
 			}
+
 			console.log('user signed in');
 		}).catch(function(error){
 			self.setState({error: error.message});
@@ -26851,7 +26937,7 @@ module.exports = React.createClass({displayName: "exports",
 	}
 });
 
-},{"firebase":3,"react":237}],243:[function(require,module,exports){
+},{"firebase":3,"react":237}],244:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -26859,6 +26945,16 @@ var Link = require('react-router').Link;
 
 module.exports = React.createClass({displayName: "exports",
 	render: function(){
+		var LoginBtn;
+		var regBtn;
+		if (this.props.loggedIn){
+			LoginBtn = React.createElement("li", null, React.createElement(Link, {to: "/logout"}, React.createElement("button", {className: "btn btn-primary"}, "Log Out")));
+			regBtn = null;
+		} else {
+			LoginBtn = React.createElement("li", null, React.createElement(Link, {to: "/login"}, React.createElement("button", {className: "btn btn-primary"}, "Log In")));
+			regBtn = React.createElement("li", null, React.createElement(Link, {to: "/register"}, React.createElement("button", {className: "btn btn-primary"}, "Register")));
+
+		}
 		return (
 			React.createElement("nav", {className: "navbar navbar-inverse navbar-fixed-top"}, 
 				React.createElement("div", {className: "navbar-header"}, 
@@ -26868,17 +26964,17 @@ module.exports = React.createClass({displayName: "exports",
 					React.createElement("ul", {className: "nav navbar-nav"}, 
 						React.createElement("li", null, React.createElement(Link, {to: "/"}, "Home")), 
 						React.createElement("li", null, React.createElement(Link, {to: "/about"}, "About")), 
-						React.createElement("li", null, React.createElement(Link, {to: "/login"}, "Login"))
+						React.createElement("li", null, React.createElement(Link, {to: "/dashboard"}, "Dashboard"))
 					), 
 					React.createElement("ul", {className: "nav navbar-nav navbar-right"}, 
-						React.createElement("li", null, React.createElement(Link, {to: "/register"}, React.createElement("button", {className: "btn btn-primary"}, "Register"))), 
-						React.createElement("li", null, React.createElement(Link, {to: "/login"}, React.createElement("button", {className: "btn btn-primary"}, "Log In")))
+						regBtn, 
+						LoginBtn
 					)
 				)
 			));
 	}
 });
-},{"react":237,"react-router":35}],244:[function(require,module,exports){
+},{"react":237,"react-router":35}],245:[function(require,module,exports){
 var React = require('react');
 
 var Link = require('react-router').Link;
@@ -26894,7 +26990,7 @@ module.exports = React.createClass({displayName: "exports",
 	}
 })
 
-},{"react":237,"react-router":35}],245:[function(require,module,exports){
+},{"react":237,"react-router":35}],246:[function(require,module,exports){
 var React = require('react');
 
 
@@ -26908,7 +27004,7 @@ module.exports = React.createClass({displayName: "exports",
 	}
 })
 
-},{"react":237}],246:[function(require,module,exports){
+},{"react":237}],247:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 
@@ -26969,7 +27065,7 @@ var Register = React.createClass({displayName: "Register",
 
 module.exports = Register;
 
-},{"firebase":3,"react":237}],247:[function(require,module,exports){
+},{"firebase":3,"react":237}],248:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -26977,7 +27073,7 @@ var routes = require('./router.js');
 
 ReactDOM.render(routes, document.getElementById('app'));
 
-},{"./router.js":248,"react":237,"react-dom":5}],248:[function(require,module,exports){
+},{"./router.js":249,"react":237,"react-dom":5}],249:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
@@ -26993,6 +27089,7 @@ var App = require('./components/App.js');
 var Home   = require('./components/Home.js');
 var About = require('./components/About.js');
 var LoginForm = require('./components/Login.js');
+var LogOut = require('./components/LogOut.js');
 var ParamTest = require('./components/ParamSample.js');
 var Register = require('./components/Register.js');
 var Dashboard = require('./components/Dashboard.js');
@@ -27008,6 +27105,7 @@ var routes = (
 				React.createElement(Route, {path: "/about", component: About}), 
 				React.createElement(Route, {path: "/about/:testparam", component: ParamTest}), 
 				React.createElement(Route, {path: "/login", component: LoginForm}), 
+				React.createElement(Route, {path: "/logout", component: LogOut}), 
 				React.createElement(Route, {path: "/register", component: Register}), 
 				React.createElement(Route, {path: "/dashboard", component: Dashboard, onEnter: authenticate}), 
 				React.createElement(Route, {path: "*", component: NotFound})
@@ -27017,7 +27115,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/About.js":238,"./components/App.js":239,"./components/Dashboard.js":240,"./components/Home.js":241,"./components/Login.js":242,"./components/NotFound.js":244,"./components/ParamSample.js":245,"./components/Register.js":246,"./utils/authenticate.js":249,"react":237,"react-dom":5,"react-router":35}],249:[function(require,module,exports){
+},{"./components/About.js":238,"./components/App.js":239,"./components/Dashboard.js":240,"./components/Home.js":241,"./components/LogOut.js":242,"./components/Login.js":243,"./components/NotFound.js":245,"./components/ParamSample.js":246,"./components/Register.js":247,"./utils/authenticate.js":250,"react":237,"react-dom":5,"react-router":35}],250:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var config = require('./../../firebase.config.js');
@@ -27026,18 +27124,19 @@ var config = require('./../../firebase.config.js');
 firebase.initializeApp(config);
 
 function requireAuth(nextState, replace){
-	var user = firebase.auth().currentUser;
-	if (null === firebase.auth().currentUser){
-		replace({
-			pathname: '/login',
-			state: {nextPathName: nextState.location.pathname}
-		});
-	} else {
-		console.log('current user: ' + user.email);
-	}
+	// var user = firebase.auth().currentUser;
+	// console.log('In requireAuth, current user: ' + user);
+	// if (null === firebase.auth().currentUser){
+	// 	replace({
+	// 		pathname: '/login',
+	// 		state: {nextPathName: nextState.location.pathname}
+	// 	});
+	// } else {
+	// 	console.log('current user: ' + user.email);
+	// }
+	
 }	
-
 
 module.exports = requireAuth;
 
-},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[247]);
+},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[248]);

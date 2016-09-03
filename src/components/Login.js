@@ -6,6 +6,9 @@ module.exports = React.createClass({
 	contextTypes: { //allow access to router via context
 		router: React.PropTypes.object.isRequired
 	},
+	componentWillMount: function(){
+		console.log('in login');
+	},
 	getInitialState: function(){
 		return {
 			error: false
@@ -16,17 +19,25 @@ module.exports = React.createClass({
 		var email = this.refs.email.value;
 		var pw = this.refs.pw.value;
 		var self = this;
-		var that = this;
 		var thisRouter = this.context.router;
 
 		firebase.auth().signInWithEmailAndPassword(email, pw)
 		.then(function(result){
 			var location = self.props.location;
-			if (location.state && location.state.nextPathname){
-				thisRouter.replace(location.state.nextPathname);
+
+			if (location.state && location.state.fromPage){
+				console.log('sensed redirect');
+
+				thisRouter.push({
+					pathname: location.state.fromPage,
+					state: {loggedIn: true}
+				});
+
 			} else {
-				thisRouter.replace('/dashboard'); //re-route to home page.
+				console.log('no redirect sensed, going to homepage');
+				thisRouter.push('/'); 
 			}
+
 			console.log('user signed in');
 		}).catch(function(error){
 			self.setState({error: error.message});

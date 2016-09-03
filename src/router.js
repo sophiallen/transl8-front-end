@@ -13,6 +13,7 @@ var App = require('./components/App.js');
 var Home   = require('./components/Home.js');
 var About = require('./components/About.js');
 var LoginForm = require('./components/Login.js');
+var LogOut = require('./components/LogOut.js');
 var ParamTest = require('./components/ParamSample.js');
 var Register = require('./components/Register.js');
 var Dashboard = require('./components/Dashboard.js');
@@ -28,6 +29,7 @@ var routes = (
 				<Route path="/about" component={About} />
 				<Route path="/about/:testparam" component={ParamTest} />
 				<Route path="/login" component={LoginForm} />
+				<Route path="/logout" component={LogOut} />
 				<Route path="/register" component={Register} />
 				<Route path="/dashboard" component={Dashboard} onEnter={authenticate}/>
 				<Route path="*" component={NotFound} />
