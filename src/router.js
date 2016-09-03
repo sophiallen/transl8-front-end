@@ -31,7 +31,7 @@ var routes = (
 				<Route path="/login" component={LoginForm} />
 				<Route path="/logout" component={LogOut} />
 				<Route path="/register" component={Register} />
-				<Route path="/dashboard" component={Dashboard} onEnter={authenticate}/>
+				<Route path="/dashboard" component={Dashboard}/>
 				<Route path="*" component={NotFound} />
 			</Route>
 		</Router>

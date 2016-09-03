@@ -2,12 +2,8 @@ var React = require('react');
 var firebase = require('firebase');
 
 module.exports = React.createClass({
-
 	contextTypes: { //allow access to router via context
 		router: React.PropTypes.object.isRequired
-	},
-	componentWillMount: function(){
-		console.log('in login');
 	},
 	getInitialState: function(){
 		return {

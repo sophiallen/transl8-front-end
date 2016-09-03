@@ -6,7 +6,6 @@ var firebase = require('firebase');
 var HomePage = React.createClass({
 	getInitialState: function(){
 		var user = firebase.auth().currentUser;
-		console.log('setting app initial state');
 		return {
 			loggedIn: (null !== user),
 			currentUser: user

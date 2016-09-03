@@ -26738,7 +26738,6 @@ var firebase = require('firebase');
 var HomePage = React.createClass({displayName: "HomePage",
 	getInitialState: function(){
 		var user = firebase.auth().currentUser;
-		console.log('setting app initial state');
 		return {
 			loggedIn: (null !== user),
 			currentUser: user
@@ -26873,12 +26872,8 @@ var React = require('react');
 var firebase = require('firebase');
 
 module.exports = React.createClass({displayName: "exports",
-
 	contextTypes: { //allow access to router via context
 		router: React.PropTypes.object.isRequired
-	},
-	componentWillMount: function(){
-		console.log('in login');
 	},
 	getInitialState: function(){
 		return {
@@ -27107,7 +27102,7 @@ var routes = (
 				React.createElement(Route, {path: "/login", component: LoginForm}), 
 				React.createElement(Route, {path: "/logout", component: LogOut}), 
 				React.createElement(Route, {path: "/register", component: Register}), 
-				React.createElement(Route, {path: "/dashboard", component: Dashboard, onEnter: authenticate}), 
+				React.createElement(Route, {path: "/dashboard", component: Dashboard}), 
 				React.createElement(Route, {path: "*", component: NotFound})
 			)
 		)
