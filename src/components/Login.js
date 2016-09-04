@@ -1,4 +1,5 @@
 var React = require('react');
+var Link = require('react-router').Link;
 var firebase = require('firebase');
 
 module.exports = React.createClass({
@@ -56,6 +57,7 @@ module.exports = React.createClass({
 					</div>
 					{errors}
 					<button type="submit" className="btn btn-primary">Log In</button>
+					<h4>Need an account? <Link to="/register">Click here to register!</Link></h4>
 				</form>
 			</div>
 		);

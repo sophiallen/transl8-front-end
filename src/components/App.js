@@ -23,6 +23,7 @@ var HomePage = React.createClass({
 				that.setState({currentUser: firebaseUser});
 			} else {
 				console.log('No one logged in');
+				that.setState({currentUser: 'no one logged in'});
 			}
 		});
 	},
@@ -31,7 +32,7 @@ var HomePage = React.createClass({
 			<div>
 				<NavBar loggedIn={this.state.loggedIn}/>
 				<div className="pageContent">
-					{React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn})}
+					{React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser})}
 				</div>
 			</div>
 			);

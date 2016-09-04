@@ -1,5 +1,7 @@
 var React = require('react');
 var firebase = require('firebase');
+var UserDataForm = require('./dashboard/UserDataForm.js');
+
 
 var dashboard = React.createClass({
 	contextTypes: { //allow access to router via context
@@ -11,7 +13,7 @@ var dashboard = React.createClass({
 
 		if (!this.props.loggedIn && !justLoggedIn) {
 			var thisRouter = this.context.router;
-
+			var that = this;
 			//check auth again in case of page refresh.
 			//TODO: maybe I can do this with onEnter via router? 
 			firebase.auth().onAuthStateChanged(firebaseUser => { 
@@ -21,6 +23,10 @@ var dashboard = React.createClass({
 						pathname: '/login',
 						state: {fromPage: '/dashboard'}
 					});
+				} else {
+					that.setState({
+						currentUser: this.props.currentUser
+					})
 				}
 			});
 		} 
@@ -30,6 +36,7 @@ var dashboard = React.createClass({
 			<div>
 				<h1 className="page-header">User Dashboard</h1>
 				<h3>User is {this.props.loggedIn? 'logged in' : 'not logged in'}</h3>
+				<UserDataForm user={this.props.currentUser}/>
 			</div>
 		);
 	}

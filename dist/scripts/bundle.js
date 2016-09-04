@@ -26755,6 +26755,7 @@ var HomePage = React.createClass({displayName: "HomePage",
 				that.setState({currentUser: firebaseUser});
 			} else {
 				console.log('No one logged in');
+				that.setState({currentUser: 'no one logged in'});
 			}
 		});
 	},
@@ -26763,7 +26764,7 @@ var HomePage = React.createClass({displayName: "HomePage",
 			React.createElement("div", null, 
 				React.createElement(NavBar, {loggedIn: this.state.loggedIn}), 
 				React.createElement("div", {className: "pageContent"}, 
-					React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn})
+					React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser})
 				)
 			)
 			);
@@ -26775,6 +26776,8 @@ module.exports = HomePage;
 },{"./NavBar.js":244,"firebase":3,"react":237,"react-router":35}],240:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
+var UserDataForm = require('./dashboard/UserDataForm.js');
+
 
 var dashboard = React.createClass({displayName: "dashboard",
 	contextTypes: { //allow access to router via context
@@ -26786,7 +26789,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 		if (!this.props.loggedIn && !justLoggedIn) {
 			var thisRouter = this.context.router;
-
+			var that = this;
 			//check auth again in case of page refresh.
 			//TODO: maybe I can do this with onEnter via router? 
 			firebase.auth().onAuthStateChanged(firebaseUser => { 
@@ -26796,6 +26799,10 @@ var dashboard = React.createClass({displayName: "dashboard",
 						pathname: '/login',
 						state: {fromPage: '/dashboard'}
 					});
+				} else {
+					that.setState({
+						currentUser: this.props.currentUser
+					})
 				}
 			});
 		} 
@@ -26804,7 +26811,8 @@ var dashboard = React.createClass({displayName: "dashboard",
 		return (
 			React.createElement("div", null, 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
-				React.createElement("h3", null, "User is ", this.props.loggedIn? 'logged in' : 'not logged in')
+				React.createElement("h3", null, "User is ", this.props.loggedIn? 'logged in' : 'not logged in'), 
+				React.createElement(UserDataForm, {user: this.props.currentUser})
 			)
 		);
 	}
@@ -26812,7 +26820,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 module.exports = dashboard;
 
-},{"firebase":3,"react":237}],241:[function(require,module,exports){
+},{"./dashboard/UserDataForm.js":248,"firebase":3,"react":237}],241:[function(require,module,exports){
 var React = require('react');
 var Link = require('react-router').Link;
 
@@ -26821,7 +26829,7 @@ module.exports = React.createClass({displayName: "exports",
 		return (
 				React.createElement("div", null, 
 					React.createElement("h1", {className: "page-header"}, "Welcome to Transl8r"), 
-					React.createElement("h4", null, "We're making mobile translation more accessible, one text at a time. ", React.createElement(Link, {to: "/login"}, "Let's get started!")), 
+					React.createElement("h4", null, "We're making mobile translation more accessible, one text at a time. ", React.createElement(Link, {to: "/register"}, "Let's get started!")), 
 					React.createElement("div", {className: "row"}, 
 						React.createElement("div", {className: "col-md-4"}, 
 							React.createElement("h4", null, "Try out a demo!"), 
@@ -26869,6 +26877,7 @@ module.exports = React.createClass({displayName: "exports",
 });
 },{"firebase":3,"react":237,"react-router":35}],243:[function(require,module,exports){
 var React = require('react');
+var Link = require('react-router').Link;
 var firebase = require('firebase');
 
 module.exports = React.createClass({displayName: "exports",
@@ -26925,14 +26934,15 @@ module.exports = React.createClass({displayName: "exports",
 						React.createElement("input", {type: "password", className: "form-control", ref: "pw", placeholder: "password"})
 					), 
 					errors, 
-					React.createElement("button", {type: "submit", className: "btn btn-primary"}, "Log In")
+					React.createElement("button", {type: "submit", className: "btn btn-primary"}, "Log In"), 
+					React.createElement("h4", null, "Need an account? ", React.createElement(Link, {to: "/register"}, "Click here to register!"))
 				)
 			)
 		);
 	}
 });
 
-},{"firebase":3,"react":237}],244:[function(require,module,exports){
+},{"firebase":3,"react":237,"react-router":35}],244:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -27062,13 +27072,65 @@ module.exports = Register;
 
 },{"firebase":3,"react":237}],248:[function(require,module,exports){
 var React = require('react');
+var firebase = require('firebase');
+var Link = require('react-router').Link;
+
+var UserDataForm = React.createClass({displayName: "UserDataForm",
+	getInitialState: function(){
+		return {
+			languages: [
+				{langName: 'English', langCode: 'en', key: 1},
+				{langName: 'French', langCode: 'fr', key: 2},
+				{langName: 'Spanish', langCode: 'es', key: 3}
+			]
+		}
+	},
+	handleSubmit: function(e){
+		e.preventDefault();
+		console.log(this.refs.fromLanguage.value);
+	},
+	createLangItem: function(item, index){
+		return React.createElement("option", {key: index, value: item.langCode}, item.langName)
+	},
+	render: function(){
+		return (React.createElement("div", null, 
+				React.createElement("h1", {className: "page-header"}, " Change Your Preferences"), 
+				React.createElement("form", {onSubmit: this.handleSubmit}, 
+					React.createElement("div", {className: "form-group"}, 
+						React.createElement("label", null, "Your Phone Number"), 
+						React.createElement("input", {className: "form-control", ref: "phone", placeholder: "###-###-####"})
+					), 
+					React.createElement("div", {className: "form-group"}, 
+						React.createElement("label", null, "Default 'From' Language"), 
+						React.createElement("select", {ref: "fromLanguage", className: "form-control"}, 
+							React.createElement("option", {value: "none"}, "None Set"), 
+							this.state.languages.map(this.createLangItem)
+						)
+					), 
+					React.createElement("div", {className: "form-group"}, 
+						React.createElement("label", null, "Default 'To' Language"), 
+						React.createElement("select", {ref: "toLanguage", className: "form-control"}, 
+							React.createElement("option", {value: "none"}, "None Set"), 
+							this.state.languages.map(this.createLangItem)
+						)
+					), 
+					React.createElement("button", {type: "submit", className: "btn btn-primary"}, "Save Preferences"), 
+					React.createElement("h4", null, "Why set your preferences? ", React.createElement(Link, {to: "/register"}, "Click here to learn more."))
+				)
+			))
+	}
+});
+
+module.exports = UserDataForm;
+},{"firebase":3,"react":237,"react-router":35}],249:[function(require,module,exports){
+var React = require('react');
 var ReactDOM = require('react-dom');
 
 var routes = require('./router.js');
 
 ReactDOM.render(routes, document.getElementById('app'));
 
-},{"./router.js":249,"react":237,"react-dom":5}],249:[function(require,module,exports){
+},{"./router.js":250,"react":237,"react-dom":5}],250:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
@@ -27110,7 +27172,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/About.js":238,"./components/App.js":239,"./components/Dashboard.js":240,"./components/Home.js":241,"./components/LogOut.js":242,"./components/Login.js":243,"./components/NotFound.js":245,"./components/ParamSample.js":246,"./components/Register.js":247,"./utils/authenticate.js":250,"react":237,"react-dom":5,"react-router":35}],250:[function(require,module,exports){
+},{"./components/About.js":238,"./components/App.js":239,"./components/Dashboard.js":240,"./components/Home.js":241,"./components/LogOut.js":242,"./components/Login.js":243,"./components/NotFound.js":245,"./components/ParamSample.js":246,"./components/Register.js":247,"./utils/authenticate.js":251,"react":237,"react-dom":5,"react-router":35}],251:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var config = require('./../../firebase.config.js');
@@ -27134,4 +27196,4 @@ function requireAuth(nextState, replace){
 
 module.exports = requireAuth;
 
-},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[248]);
+},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[249]);
