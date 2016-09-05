@@ -1,15 +1,12 @@
 var React = require('react');
 var firebase = require('firebase');
 var Link = require('react-router').Link;
+var langData = require('./../../data/languages.js');
 
 var UserDataForm = React.createClass({
 	getInitialState: function(){
 		return {
-			languages: [
-				{langName: 'English', langCode: 'en', key: 1},
-				{langName: 'French', langCode: 'fr', key: 2},
-				{langName: 'Spanish', langCode: 'es', key: 3}
-			]
+			languages: langData
 		}
 	},
 	handleSubmit: function(e){
@@ -24,25 +21,26 @@ var UserDataForm = React.createClass({
 				<h1 className="page-header"> Change Your Preferences</h1>
 				<form onSubmit={this.handleSubmit}>
 					<div className="form-group">
-						<label>Your Phone Number</label>
-						<input className="form-control" ref="phone" placeholder="###-###-####" />
+						<label>Phone Number</label>
+						<p><em>We will use this number to look up your preferences when you text the app.</em></p>
+						<input className="form-control" ref="phone" placeholder="### - ### - ####" />
 					</div>
 					<div className="form-group">
 						<label>Default 'From' Language</label>
 						<select ref="fromLanguage" className="form-control">
-							<option value="none">None Set</option>
+							<option value="none">None</option>
 							{this.state.languages.map(this.createLangItem)}
 						</select>
 					</div>
 					<div className="form-group">
 						<label>Default 'To' Language</label>
 						<select ref="toLanguage" className="form-control">
-							<option value="none">None Set</option>
+							<option value="none">None</option>
 							{this.state.languages.map(this.createLangItem)}
 						</select>
 					</div>
 					<button type="submit" className="btn btn-primary">Save Preferences</button>
-					<h4>Why set your preferences? <Link to="/register">Click here to learn more.</Link></h4>
+					<h4>Want to learn more about how preferences work? <Link to="/about">Click here for more information.</Link></h4>
 				</form>
 			</div>)
 	}
