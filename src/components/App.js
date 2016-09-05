@@ -6,6 +6,7 @@ var firebase = require('firebase');
 var HomePage = React.createClass({
 	getInitialState: function(){
 		var user = firebase.auth().currentUser;
+		console.log('in app getInitialState, user: ' + user);
 		return {
 			loggedIn: (null !== user),
 			currentUser: user
@@ -19,7 +20,7 @@ var HomePage = React.createClass({
 			});
 
 			if (firebaseUser){
-				console.log('Logged IN: ' + firebaseUser.email);
+				console.log('In app component will mount. User: ' + firebaseUser.email);
 				that.setState({currentUser: firebaseUser});
 			} else {
 				console.log('No one logged in');

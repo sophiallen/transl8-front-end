@@ -26738,6 +26738,7 @@ var firebase = require('firebase');
 var HomePage = React.createClass({displayName: "HomePage",
 	getInitialState: function(){
 		var user = firebase.auth().currentUser;
+		console.log('in app getInitialState, user: ' + user);
 		return {
 			loggedIn: (null !== user),
 			currentUser: user
@@ -26751,7 +26752,7 @@ var HomePage = React.createClass({displayName: "HomePage",
 			});
 
 			if (firebaseUser){
-				console.log('Logged IN: ' + firebaseUser.email);
+				console.log('In app component will mount. User: ' + firebaseUser.email);
 				that.setState({currentUser: firebaseUser});
 			} else {
 				console.log('No one logged in');
@@ -26778,10 +26779,13 @@ var React = require('react');
 var firebase = require('firebase');
 var UserDataForm = require('./dashboard/UserDataForm.js');
 
-
 var dashboard = React.createClass({displayName: "dashboard",
 	contextTypes: { //allow access to router via context
 		router: React.PropTypes.object.isRequired
+	},
+	getInitialState: function(){
+		console.log('in dash getInitial, user: ' + this.props.currentUser);
+		return {showForm: false};
 	},
 	componentWillMount: function(){
 		//small optimization: check to see if redirected from login as check for login status.
@@ -26790,8 +26794,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 		if (!this.props.loggedIn && !justLoggedIn) {
 			var thisRouter = this.context.router;
 			var that = this;
-			//check auth again in case of page refresh.
-			//TODO: maybe I can do this with onEnter via router? 
+
 			firebase.auth().onAuthStateChanged(firebaseUser => { 
 				if (firebaseUser === null){
 					//re-route to login page.
@@ -26800,14 +26803,25 @@ var dashboard = React.createClass({displayName: "dashboard",
 						state: {fromPage: '/dashboard'}
 					});
 				} else {
-					that.setState({
-						currentUser: this.props.currentUser
-					})
+					console.log('in dash will mount, user logged in');
 				}
 			});
 		} 
 	},
+	getUserDetails: function(){
+
+	},
+	showView: function(){
+		// this.getUserDetails();
+		// return <div>
+		// 	<h4>Name: {this.props.currentUser}</h4>
+		// 	<h4>Phone Number: {this.props.currentUser}</h4>
+		// 	<h4>Name: {this.props.currentUser}</h4>
+
+		// </div>
+	},
 	render: function(){
+		// var child = this.state.showForm? <UserDataForm user={this.props.currentUser}/> : 'User Data View';
 		return (
 			React.createElement("div", null, 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
@@ -27077,15 +27091,18 @@ var langData = require('./../../data/languages.js');
 
 var UserDataForm = React.createClass({displayName: "UserDataForm",
 	getInitialState: function(){
+		console.log('in form initial state, user: ' + this.props.user);
 		return {
 			languages: langData,
 		}
 	},
+	componentWillMount: function(){
+		console.log('in form will mount, current user: ' + this.props.user);
+	},
 	handleSubmit: function(e){
 		e.preventDefault();
 		var self = this;
-
-		firebase.database().ref('users/' + self.refs.name.value).set({
+		firebase.database().ref('users/' + this.props.user.uid).set({
 		    userName: self.refs.name.value,
 		    phone: self.refs.phone.value,
 		    defaultFrom: self.refs.fromLanguage.value,
@@ -27101,11 +27118,11 @@ var UserDataForm = React.createClass({displayName: "UserDataForm",
 	},
 	render: function(){
 		return (React.createElement("div", null, 
-				React.createElement("h1", {className: "page-header"}, " Change Your Preferences"), 
+				React.createElement("h3", {className: "page-header"}, "Your Preferences"), 
 				React.createElement("form", {onSubmit: this.handleSubmit}, 
 					React.createElement("div", {className: "form-group"}, 
-						React.createElement("label", null, "Username:"), 
-						React.createElement("input", {className: "form-control", ref: "name", placeholder: "ex: johnsmith22"})
+						React.createElement("label", null, "Name:"), 
+						React.createElement("input", {className: "form-control", ref: "name", placeholder: "Your name here"})
 					), 
 					React.createElement("div", {className: "form-group"}, 
 						React.createElement("label", null, "Phone Number"), 
