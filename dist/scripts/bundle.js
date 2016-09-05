@@ -26811,7 +26811,6 @@ var dashboard = React.createClass({displayName: "dashboard",
 		return (
 			React.createElement("div", null, 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
-				React.createElement("h3", null, "User is ", this.props.loggedIn? 'logged in' : 'not logged in'), 
 				React.createElement(UserDataForm, {user: this.props.currentUser})
 			)
 		);
@@ -27079,12 +27078,23 @@ var langData = require('./../../data/languages.js');
 var UserDataForm = React.createClass({displayName: "UserDataForm",
 	getInitialState: function(){
 		return {
-			languages: langData
+			languages: langData,
 		}
 	},
 	handleSubmit: function(e){
 		e.preventDefault();
-		console.log(this.refs.fromLanguage.value);
+		var self = this;
+
+		firebase.database().ref('users/' + self.refs.name.value).set({
+		    userName: self.refs.name.value,
+		    phone: self.refs.phone.value,
+		    defaultFrom: self.refs.fromLanguage.value,
+		    defaultTo: self.refs.toLanguage.value 
+		}) .then(function(result){
+			console.log('successfully saved data');
+		}).catch(function(error){
+			console.log('error: ' + error.message);
+		});
 	},
 	createLangItem: function(item, index){
 		return React.createElement("option", {key: index, value: item.langCode}, item.langName)
@@ -27093,6 +27103,10 @@ var UserDataForm = React.createClass({displayName: "UserDataForm",
 		return (React.createElement("div", null, 
 				React.createElement("h1", {className: "page-header"}, " Change Your Preferences"), 
 				React.createElement("form", {onSubmit: this.handleSubmit}, 
+					React.createElement("div", {className: "form-group"}, 
+						React.createElement("label", null, "Username:"), 
+						React.createElement("input", {className: "form-control", ref: "name", placeholder: "ex: johnsmith22"})
+					), 
 					React.createElement("div", {className: "form-group"}, 
 						React.createElement("label", null, "Phone Number"), 
 						React.createElement("p", null, React.createElement("em", null, "We will use this number to look up your preferences when you text the app.")), 

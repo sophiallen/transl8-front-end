@@ -6,12 +6,23 @@ var langData = require('./../../data/languages.js');
 var UserDataForm = React.createClass({
 	getInitialState: function(){
 		return {
-			languages: langData
+			languages: langData,
 		}
 	},
 	handleSubmit: function(e){
 		e.preventDefault();
-		console.log(this.refs.fromLanguage.value);
+		var self = this;
+
+		firebase.database().ref('users/' + self.refs.name.value).set({
+		    userName: self.refs.name.value,
+		    phone: self.refs.phone.value,
+		    defaultFrom: self.refs.fromLanguage.value,
+		    defaultTo: self.refs.toLanguage.value 
+		}) .then(function(result){
+			console.log('successfully saved data');
+		}).catch(function(error){
+			console.log('error: ' + error.message);
+		});
 	},
 	createLangItem: function(item, index){
 		return <option key={index} value={item.langCode}>{item.langName}</option>
@@ -20,6 +31,10 @@ var UserDataForm = React.createClass({
 		return (<div>
 				<h1 className="page-header"> Change Your Preferences</h1>
 				<form onSubmit={this.handleSubmit}>
+					<div className="form-group">
+						<label>Username:</label>
+						<input className="form-control" ref="name" placeholder="ex: johnsmith22" />
+					</div>
 					<div className="form-group">
 						<label>Phone Number</label>
 						<p><em>We will use this number to look up your preferences when you text the app.</em></p>

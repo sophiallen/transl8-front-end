@@ -35,7 +35,6 @@ var dashboard = React.createClass({
 		return (
 			<div>
 				<h1 className="page-header">User Dashboard</h1>
-				<h3>User is {this.props.loggedIn? 'logged in' : 'not logged in'}</h3>
 				<UserDataForm user={this.props.currentUser}/>
 			</div>
 		);
