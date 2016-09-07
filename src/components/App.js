@@ -10,7 +10,7 @@ var HomePage = React.createClass({
 		return {
 			loggedIn: (null !== user),
 			currentUser: user,
-			userDetails: null
+			userDetails: {}
 		}
 	},
 	componentWillMount: function(){
@@ -25,23 +25,31 @@ var HomePage = React.createClass({
 				that.setState({currentUser: firebaseUser, userDetails: userDetails});
 			} else {
 				console.log('No one logged in');
-				that.setState({currentUser: 'no one logged in'});
+				that.setState({currentUser: 'no one logged in', userDetails: null});
 			}
 		});
 	},
 	getUserDetails: function(userId){
 		var that = this;
-		firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
+		var userRef = firebase.database().ref('/users/' + userId);
+		userRef.once('value').then(function(snapshot) { //get intial details
 			var userDetails = snapshot.val();
 			that.setState({userDetails: userDetails});
 		});
+		userRef.on('child_changed', function(data){ //listen for changes in user details
+			console.log('heard change in data');
+			that.setState({userDetails: data.val()});
+		});
+	},
+	updateUserDetail: function(newDetails){
+		this.setState({userDetails: newDetails});
 	},
 	render: function(){
 		return (
 			<div>
 				<NavBar loggedIn={this.state.loggedIn}/>
 				<div className="pageContent">
-					{React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser, userDetails: this.state.userDetails})}
+					{React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser, userDetails: this.state.userDetails, onChange: this.updateUserDetail})}
 				</div>
 			</div>
 			);

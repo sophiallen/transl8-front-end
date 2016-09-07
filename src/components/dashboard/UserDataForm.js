@@ -4,6 +4,9 @@ var Link = require('react-router').Link;
 var langData = require('./../../data/languages.js');
 
 var UserDataForm = React.createClass({
+	contextTypes: { //allow access to router via context
+		router: React.PropTypes.object.isRequired
+	},
 	getInitialState: function(){
 		console.log('in form initial state, user: ' + this.props.user);
 		return {
@@ -11,19 +14,21 @@ var UserDataForm = React.createClass({
 		}
 	},
 	componentWillMount: function(){
-		console.log('in form will mount, current user: ' + this.props.user);
+		console.log('in form will mount, current props.user: ' + this.props.currentUser);
 	},
 	handleSubmit: function(e){
 		e.preventDefault();
 		var self = this;
-		firebase.database().ref('users/' + this.props.user.uid).set({
+		firebase.database().ref('users/' + this.props.currentUser.uid).set({
 		    userName: self.refs.name.value,
 		    phone: self.refs.phone.value,
 		    defaultFrom: self.refs.fromLanguage.value,
 		    defaultTo: self.refs.toLanguage.value 
 		}) .then(function(result){
 			console.log('successfully saved data');
+			self.context.router.replace('/dashboard'); //re-route to account setup
 		}).catch(function(error){
+			this.setState({error: error.message});
 			console.log('error: ' + error.message);
 		});
 	},
@@ -31,8 +36,9 @@ var UserDataForm = React.createClass({
 		return <option key={index} value={item.langCode}>{item.langName}</option>
 	},
 	render: function(){
+		var error = this.state.error? <p>this.state.error</p> : '';
 		return (<div>
-				<h3 className="page-header">Your Preferences</h3>
+				<h3 className="page-header">Registration Step Two: Set Your Preferences</h3>
 				<form onSubmit={this.handleSubmit}>
 					<div className="form-group">
 						<label>Name:</label>
@@ -57,6 +63,7 @@ var UserDataForm = React.createClass({
 							{this.state.languages.map(this.createLangItem)}
 						</select>
 					</div>
+					{error}
 					<button type="submit" className="btn btn-primary">Save Preferences</button>
 					<h4>Want to learn more about how preferences work? <Link to="/about">Click here for more information.</Link></h4>
 				</form>

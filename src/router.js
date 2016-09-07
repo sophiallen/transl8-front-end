@@ -16,6 +16,7 @@ var LoginForm = require('./components/Login.js');
 var LogOut = require('./components/LogOut.js');
 var ParamTest = require('./components/ParamSample.js');
 var Register = require('./components/Register.js');
+var SetUp = require('./components/dashboard/UserDataForm.js');
 var Dashboard = require('./components/Dashboard.js');
 var NotFound = require('./components/NotFound.js');
 
@@ -31,6 +32,7 @@ var routes = (
 				<Route path="/login" component={LoginForm} />
 				<Route path="/logout" component={LogOut} />
 				<Route path="/register" component={Register} />
+				<Route path="/setup" component={SetUp} />
 				<Route path="/dashboard" component={Dashboard}/>
 				<Route path="*" component={NotFound} />
 			</Route>

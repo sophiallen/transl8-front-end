@@ -1,6 +1,6 @@
 var React = require('react');
 var firebase = require('firebase');
-var UserDataForm = require('./dashboard/UserDataForm.js');
+var EditableText = require('./dashboard/EditableText.js');
 
 var dashboard = React.createClass({
 	contextTypes: { //allow access to router via context
@@ -8,7 +8,9 @@ var dashboard = React.createClass({
 	},
 	getInitialState: function(){
 		console.log('in dash getInitial, user: ' + this.props.currentUser);
-		return {showForm: false, userDetails: null};
+		return {
+			userDetails: this.props.userDetails
+		};
 	},
 	componentWillMount: function(){
 		//small optimization: check to see if redirected from login as check for login status.
@@ -27,46 +29,33 @@ var dashboard = React.createClass({
 					});
 				} else {
 					console.log('in dash will mount, user logged in');
-					this.getUserDetails(firebaseUser.uid);
 				}
 			});
 		} 
 	},
-	renderDisplay: function(){
-		var details = this.props.userDetails;
-		if (details) {
-			return (
-				<div>
-					<h4>User Name: {details.userName}</h4>
-					<h4>Phone Number: {details.phone}</h4>
-					<h4>Default 'From' Language: {details.defaultFrom}</h4>
-					<h4>Default 'To' Language: {details.defaultTo}</h4>
-					<button className="btn btn-primary" onClick={this.edit}>Edit Preferences</button>
-				</div>
-			)
-		} else {
-			return (<h4>Loading details...</h4>);
-		}
+	update: function(newDetailData, keyName){
+		var details = this.state.userDetails;
+		details[keyName] = newDetailData;
+		this.setState({userDetails: details});
 
-	},
-	edit: function(){
-		this.setState({showForm: true});
-	},
-	renderForm: function(){
-		return (<UserDataForm user={this.props.currentUser} userDetails={this.props.userDetails}/>);
+		var updates = {};
+		updates['/users/' + this.props.currentUser.uid + '/' + keyName] = newDetailData;
+		var that = this;
+		firebase.database().ref().update(updates).then(function(response){
+			that.props.onChange(details);
+		});
 	},
 	render: function(){
-		var child;
-		if (this.state.showForm){
-			child = this.renderForm();
-		} else {
-			child = this.renderDisplay();
-		}
-
 		return (
 			<div>
 				<h1 className="page-header">User Dashboard</h1>
-				{child}
+				<h4>{this.state.userDetails.userName || 'loading'}</h4>
+				<h4><strong>Name:  </strong>
+					<EditableText placeHolder={this.state.userDetails.userName} keyName="userName" onChange={this.update} />
+				</h4>
+				<h4> <strong>Phone Number:  </strong>
+					<EditableText placeHolder={this.state.userDetails.phone} keyName="phone" onChange={this.update} />
+				</h4>
 			</div>
 		);
 	}

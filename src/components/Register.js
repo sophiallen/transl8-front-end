@@ -22,7 +22,7 @@ var Register = React.createClass({
 		//authenticated create via firebase
 		firebase.auth().createUserWithEmailAndPassword(email,pw)
 		.then(function(user){
-			that.context.router.replace('/'); //re-route to home page.
+			that.context.router.replace('/setup'); //re-route to account setup
 		})
 		.catch(function(error){
 				that.setState({error: error.message});
