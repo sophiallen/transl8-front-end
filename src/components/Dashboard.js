@@ -50,12 +50,9 @@ var dashboard = React.createClass({
 			<div>
 				<h1 className="page-header">User Dashboard</h1>
 				<h4>{this.state.userDetails.userName || 'loading'}</h4>
-				<h4><strong>Name:  </strong>
-					<EditableText placeHolder={this.state.userDetails.userName} keyName="userName" onChange={this.update} />
-				</h4>
-				<h4> <strong>Phone Number:  </strong>
-					<EditableText placeHolder={this.state.userDetails.phone} keyName="phone" onChange={this.update} />
-				</h4>
+				<EditableText title="Name" placeHolder={this.state.userDetails.userName} keyName="userName" onChange={this.update} />
+				<EditableText title="Phone Number" placeHolder={this.state.userDetails.phone} keyName="phone" onChange={this.update} />
+
 			</div>
 		);
 	}

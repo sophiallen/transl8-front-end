@@ -10,16 +10,16 @@ var EditableText = React.createClass({
 	},
 	renderForm: function(){
 		return (
-			<div>
+			<div className="form-group">
+				<label>{this.props.title}</label>
 				<input type="text" ref="newText" placeholder={this.props.placeHolder} className="form-control"/>
-				<button onClick={this.save} className="btn btn-success">Save</button>
+				<button onClick={this.save} className="btn btn-success btn-small">Save</button>
 			</div>)
 	},
 	renderDisplay: function(){
-		return (<span>
-					{this.props.placeHolder} 
+		return (<h4>{this.props.title}: {this.props.placeHolder} 
 					<button className="btn btn-small btn-default" onClick={this.edit}>Edit</button>
-				</span>);
+				</h4>);
 	},
 	save: function(){
 		this.setState({editing: false});

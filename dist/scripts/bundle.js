@@ -26843,12 +26843,9 @@ var dashboard = React.createClass({displayName: "dashboard",
 			React.createElement("div", null, 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
 				React.createElement("h4", null, this.state.userDetails.userName || 'loading'), 
-				React.createElement("h4", null, React.createElement("strong", null, "Name:  "), 
-					React.createElement(EditableText, {placeHolder: this.state.userDetails.userName, keyName: "userName", onChange: this.update})
-				), 
-				React.createElement("h4", null, " ", React.createElement("strong", null, "Phone Number:  "), 
-					React.createElement(EditableText, {placeHolder: this.state.userDetails.phone, keyName: "phone", onChange: this.update})
-				)
+				React.createElement(EditableText, {title: "Name", placeHolder: this.state.userDetails.userName, keyName: "userName", onChange: this.update}), 
+				React.createElement(EditableText, {title: "Phone Number", placeHolder: this.state.userDetails.phone, keyName: "phone", onChange: this.update})
+
 			)
 		);
 	}
@@ -27119,14 +27116,14 @@ var EditableText = React.createClass({displayName: "EditableText",
 	},
 	renderForm: function(){
 		return (
-			React.createElement("div", null, 
+			React.createElement("div", {className: "form-group"}, 
+				React.createElement("label", null, this.props.title), 
 				React.createElement("input", {type: "text", ref: "newText", placeholder: this.props.placeHolder, className: "form-control"}), 
-				React.createElement("button", {onClick: this.save, className: "btn btn-success"}, "Save")
+				React.createElement("button", {onClick: this.save, className: "btn btn-success btn-small"}, "Save")
 			))
 	},
 	renderDisplay: function(){
-		return (React.createElement("span", null, 
-					this.props.placeHolder, 
+		return (React.createElement("h4", null, this.props.title, ": ", this.props.placeHolder, 
 					React.createElement("button", {className: "btn btn-small btn-default", onClick: this.edit}, "Edit")
 				));
 	},
