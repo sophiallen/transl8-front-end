@@ -9,7 +9,8 @@ var HomePage = React.createClass({
 		console.log('in app getInitialState, user: ' + user);
 		return {
 			loggedIn: (null !== user),
-			currentUser: user
+			currentUser: user,
+			userDetails: null
 		}
 	},
 	componentWillMount: function(){
@@ -20,12 +21,19 @@ var HomePage = React.createClass({
 			});
 
 			if (firebaseUser){
-				console.log('In app component will mount. User: ' + firebaseUser.email);
-				that.setState({currentUser: firebaseUser});
+				var userDetails = this.getUserDetails(firebaseUser.uid);
+				that.setState({currentUser: firebaseUser, userDetails: userDetails});
 			} else {
 				console.log('No one logged in');
 				that.setState({currentUser: 'no one logged in'});
 			}
+		});
+	},
+	getUserDetails: function(userId){
+		var that = this;
+		firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
+			var userDetails = snapshot.val();
+			that.setState({userDetails: userDetails});
 		});
 	},
 	render: function(){
@@ -33,7 +41,7 @@ var HomePage = React.createClass({
 			<div>
 				<NavBar loggedIn={this.state.loggedIn}/>
 				<div className="pageContent">
-					{React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser})}
+					{React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser, userDetails: this.state.userDetails})}
 				</div>
 			</div>
 			);

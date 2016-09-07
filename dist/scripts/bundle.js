@@ -26741,7 +26741,8 @@ var HomePage = React.createClass({displayName: "HomePage",
 		console.log('in app getInitialState, user: ' + user);
 		return {
 			loggedIn: (null !== user),
-			currentUser: user
+			currentUser: user,
+			userDetails: null
 		}
 	},
 	componentWillMount: function(){
@@ -26752,12 +26753,19 @@ var HomePage = React.createClass({displayName: "HomePage",
 			});
 
 			if (firebaseUser){
-				console.log('In app component will mount. User: ' + firebaseUser.email);
-				that.setState({currentUser: firebaseUser});
+				var userDetails = this.getUserDetails(firebaseUser.uid);
+				that.setState({currentUser: firebaseUser, userDetails: userDetails});
 			} else {
 				console.log('No one logged in');
 				that.setState({currentUser: 'no one logged in'});
 			}
+		});
+	},
+	getUserDetails: function(userId){
+		var that = this;
+		firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
+			var userDetails = snapshot.val();
+			that.setState({userDetails: userDetails});
 		});
 	},
 	render: function(){
@@ -26765,7 +26773,7 @@ var HomePage = React.createClass({displayName: "HomePage",
 			React.createElement("div", null, 
 				React.createElement(NavBar, {loggedIn: this.state.loggedIn}), 
 				React.createElement("div", {className: "pageContent"}, 
-					React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser})
+					React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser, userDetails: this.state.userDetails})
 				)
 			)
 			);
@@ -26785,7 +26793,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 	},
 	getInitialState: function(){
 		console.log('in dash getInitial, user: ' + this.props.currentUser);
-		return {showForm: false};
+		return {showForm: false, userDetails: null};
 	},
 	componentWillMount: function(){
 		//small optimization: check to see if redirected from login as check for login status.
@@ -26804,27 +26812,28 @@ var dashboard = React.createClass({displayName: "dashboard",
 					});
 				} else {
 					console.log('in dash will mount, user logged in');
+					this.getUserDetails(firebaseUser.uid);
 				}
 			});
 		} 
 	},
-	getUserDetails: function(){
-
-	},
-	showView: function(){
-		// this.getUserDetails();
-		// return <div>
-		// 	<h4>Name: {this.props.currentUser}</h4>
-		// 	<h4>Phone Number: {this.props.currentUser}</h4>
-		// 	<h4>Name: {this.props.currentUser}</h4>
-
-		// </div>
+	renderDisplay: function(){
+		var details = this.props.userDetails;
+		return (
+			React.createElement("div", null, 
+				React.createElement("h4", null, "User Name: ", details.userName), 
+				React.createElement("h4", null, "Phone Number: ", details.phone), 
+				React.createElement("h4", null, "Default 'From' Language: ", details.defaultFrom), 
+				React.createElement("h4", null, "Default 'To' Language: ", details.defaultTo)
+			)
+		)
 	},
 	render: function(){
 		// var child = this.state.showForm? <UserDataForm user={this.props.currentUser}/> : 'User Data View';
 		return (
 			React.createElement("div", null, 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
+				React.createElement("h4", null, "Welcome, ", this.props.userDetails? this.props.userDetails.userName : 'unknown user'), 
 				React.createElement(UserDataForm, {user: this.props.currentUser})
 			)
 		);
