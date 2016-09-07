@@ -34,22 +34,39 @@ var dashboard = React.createClass({
 	},
 	renderDisplay: function(){
 		var details = this.props.userDetails;
-		return (
-			<div>
-				<h4>User Name: {details.userName}</h4>
-				<h4>Phone Number: {details.phone}</h4>
-				<h4>Default 'From' Language: {details.defaultFrom}</h4>
-				<h4>Default 'To' Language: {details.defaultTo}</h4>
-			</div>
-		)
+		if (details) {
+			return (
+				<div>
+					<h4>User Name: {details.userName}</h4>
+					<h4>Phone Number: {details.phone}</h4>
+					<h4>Default 'From' Language: {details.defaultFrom}</h4>
+					<h4>Default 'To' Language: {details.defaultTo}</h4>
+					<button className="btn btn-primary" onClick={this.edit}>Edit Preferences</button>
+				</div>
+			)
+		} else {
+			return (<h4>Loading details...</h4>);
+		}
+
+	},
+	edit: function(){
+		this.setState({showForm: true});
+	},
+	renderForm: function(){
+		return (<UserDataForm user={this.props.currentUser} userDetails={this.props.userDetails}/>);
 	},
 	render: function(){
-		// var child = this.state.showForm? <UserDataForm user={this.props.currentUser}/> : 'User Data View';
+		var child;
+		if (this.state.showForm){
+			child = this.renderForm();
+		} else {
+			child = this.renderDisplay();
+		}
+
 		return (
 			<div>
 				<h1 className="page-header">User Dashboard</h1>
-				<h4>Welcome, {this.props.userDetails? this.props.userDetails.userName : 'unknown user'}</h4>
-				<UserDataForm user={this.props.currentUser}/>
+				{child}
 			</div>
 		);
 	}

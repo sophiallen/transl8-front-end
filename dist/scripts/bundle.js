@@ -26819,22 +26819,39 @@ var dashboard = React.createClass({displayName: "dashboard",
 	},
 	renderDisplay: function(){
 		var details = this.props.userDetails;
-		return (
-			React.createElement("div", null, 
-				React.createElement("h4", null, "User Name: ", details.userName), 
-				React.createElement("h4", null, "Phone Number: ", details.phone), 
-				React.createElement("h4", null, "Default 'From' Language: ", details.defaultFrom), 
-				React.createElement("h4", null, "Default 'To' Language: ", details.defaultTo)
+		if (details) {
+			return (
+				React.createElement("div", null, 
+					React.createElement("h4", null, "User Name: ", details.userName), 
+					React.createElement("h4", null, "Phone Number: ", details.phone), 
+					React.createElement("h4", null, "Default 'From' Language: ", details.defaultFrom), 
+					React.createElement("h4", null, "Default 'To' Language: ", details.defaultTo), 
+					React.createElement("button", {className: "btn btn-primary", onClick: this.edit}, "Edit Preferences")
+				)
 			)
-		)
+		} else {
+			return (React.createElement("h4", null, "Loading details..."));
+		}
+
+	},
+	edit: function(){
+		this.setState({showForm: true});
+	},
+	renderForm: function(){
+		return (React.createElement(UserDataForm, {user: this.props.currentUser, userDetails: this.props.userDetails}));
 	},
 	render: function(){
-		// var child = this.state.showForm? <UserDataForm user={this.props.currentUser}/> : 'User Data View';
+		var child;
+		if (this.state.showForm){
+			child = this.renderForm();
+		} else {
+			child = this.renderDisplay();
+		}
+
 		return (
 			React.createElement("div", null, 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
-				React.createElement("h4", null, "Welcome, ", this.props.userDetails? this.props.userDetails.userName : 'unknown user'), 
-				React.createElement(UserDataForm, {user: this.props.currentUser})
+				child
 			)
 		);
 	}
