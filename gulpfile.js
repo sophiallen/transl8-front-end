@@ -10,7 +10,7 @@ var concat = require('gulp-concat');
 var historyApiFallback = require('connect-history-api-fallback');
 
 var config = {
-	port: 3005,
+	port: 3004,
 	devBaseUrl: 'http://localhost',
 	paths: {
 		html: './src/*.html',

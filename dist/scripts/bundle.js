@@ -26742,7 +26742,7 @@ var HomePage = React.createClass({displayName: "HomePage",
 		return {
 			loggedIn: (null !== user),
 			currentUser: user,
-			userDetails: {}
+			userDetails: null
 		}
 	},
 	componentWillMount: function(){
@@ -26767,14 +26767,29 @@ var HomePage = React.createClass({displayName: "HomePage",
 		userRef.once('value').then(function(snapshot) { //get intial details
 			var userDetails = snapshot.val();
 			that.setState({userDetails: userDetails});
+			return userDetails;
 		});
 		userRef.on('child_changed', function(data){ //listen for changes in user details
 			console.log('heard change in data');
-			that.setState({userDetails: data.val()});
+			that.updateUserDetail(data.val());
+			//that.setState({userDetails: data.val()});
 		});
 	},
 	updateUserDetail: function(newDetails){
 		this.setState({userDetails: newDetails});
+	},
+	childContextTypes: {
+		userData: React.PropTypes.object
+	},
+	getChildContext: function(){
+		// if (!this.state.userDetails && this.state.loggedIn){
+		// 	var details = this.getUserDetails();
+		// 	console.log('in getChildContext, heard login, fetching details...');
+		// 	this.updateUserDetail(details);
+		// 	return {userData: details}
+		// } 
+		console.log('in child context: userDetails: ' + this.state.userDetails);
+		return {userData: this.state.userDetails}
 	},
 	render: function(){
 		return (
@@ -26797,7 +26812,8 @@ var EditableText = require('./dashboard/EditableText.js');
 
 var dashboard = React.createClass({displayName: "dashboard",
 	contextTypes: { //allow access to router via context
-		router: React.PropTypes.object.isRequired
+		router: React.PropTypes.object.isRequired,
+		userData: React.PropTypes.object
 	},
 	getInitialState: function(){
 		console.log('in dash getInitial, user: ' + this.props.currentUser);
@@ -26808,6 +26824,8 @@ var dashboard = React.createClass({displayName: "dashboard",
 	componentWillMount: function(){
 		//small optimization: check to see if redirected from login as check for login status.
 		var justLoggedIn = (this.props.location.state && this.props.location.state.loggedIn);
+		
+		console.log('in dash, context.userData: ' + this.context.userData);
 
 		if (!this.props.loggedIn && !justLoggedIn) {
 			var thisRouter = this.context.router;
@@ -26839,12 +26857,16 @@ var dashboard = React.createClass({displayName: "dashboard",
 		});
 	},
 	render: function(){
+				//temp hardcoded, need to go back and fix this...
+		var userName = this.state.userDetails? this.state.userDetails.userName : 'unknown';
+		var phone = this.state.userDetails? this.state.userDetails.phone : 'unknown';
 		return (
 			React.createElement("div", null, 
+				React.createElement("h1", null, "Welcome, ", this.context.userData? this.context.userData.userName: 'Loading...'), 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
-				React.createElement("h4", null, this.state.userDetails.userName || 'loading'), 
-				React.createElement(EditableText, {title: "Name", placeHolder: this.state.userDetails.userName, keyName: "userName", onChange: this.update}), 
-				React.createElement(EditableText, {title: "Phone Number", placeHolder: this.state.userDetails.phone, keyName: "phone", onChange: this.update})
+
+				React.createElement(EditableText, {title: "Name", placeHolder: this.context.userData? this.context.userData.userName : 'loading...', keyName: "userName", onChange: this.update}), 
+				React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update})
 
 			)
 		);
@@ -26858,7 +26880,11 @@ var React = require('react');
 var Link = require('react-router').Link;
 
 module.exports = React.createClass({displayName: "exports",
+	contextTypes: {
+		userData: React.PropTypes.object
+	},
 	render: function(){
+		console.log('in home render, userData: ' + this.context.userData);
 		return (
 				React.createElement("div", null, 
 					React.createElement("h1", {className: "page-header"}, "Welcome to Transl8r"), 

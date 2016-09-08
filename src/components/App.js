@@ -10,7 +10,7 @@ var HomePage = React.createClass({
 		return {
 			loggedIn: (null !== user),
 			currentUser: user,
-			userDetails: {}
+			userDetails: null
 		}
 	},
 	componentWillMount: function(){
@@ -35,14 +35,29 @@ var HomePage = React.createClass({
 		userRef.once('value').then(function(snapshot) { //get intial details
 			var userDetails = snapshot.val();
 			that.setState({userDetails: userDetails});
+			return userDetails;
 		});
 		userRef.on('child_changed', function(data){ //listen for changes in user details
 			console.log('heard change in data');
-			that.setState({userDetails: data.val()});
+			that.updateUserDetail(data.val());
+			//that.setState({userDetails: data.val()});
 		});
 	},
 	updateUserDetail: function(newDetails){
 		this.setState({userDetails: newDetails});
+	},
+	childContextTypes: {
+		userData: React.PropTypes.object
+	},
+	getChildContext: function(){
+		// if (!this.state.userDetails && this.state.loggedIn){
+		// 	var details = this.getUserDetails();
+		// 	console.log('in getChildContext, heard login, fetching details...');
+		// 	this.updateUserDetail(details);
+		// 	return {userData: details}
+		// } 
+		console.log('in child context: userDetails: ' + this.state.userDetails);
+		return {userData: this.state.userDetails}
 	},
 	render: function(){
 		return (
