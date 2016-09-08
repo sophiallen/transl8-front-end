@@ -51,14 +51,12 @@ var dashboard = React.createClass({
 	render: function(){
 
 		return (
-			<div>
+			<div className="dashboard">
 				<h1 className="page-header">User Dashboard</h1>
-				<form>
 				<EditableText title="Name" placeHolder={this.context.userData? this.context.userData.userName : 'loading...'} keyName="userName" onChange={this.update} />
 				<EditableText title="Phone Number" placeHolder={this.context.userData? this.context.userData.phone : 'loading...'} keyName="phone" onChange={this.update} />
 				<EditableDropDown title="Default 'From' Language" placeHolder={this.context.userData? this.context.userData.defaultFrom : 'loading'} keyName="defaultFrom" selectionData={langData} onChange={this.update} />
 				<EditableDropDown title="Default 'To' Language" placeHolder={this.context.userData? this.context.userData.defaultTo : 'loading'} keyName="defaultTo" selectionData={langData} onChange={this.update} />
-				</form>
 			</div>
 		);
 	}

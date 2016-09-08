@@ -26850,14 +26850,12 @@ var dashboard = React.createClass({displayName: "dashboard",
 	render: function(){
 
 		return (
-			React.createElement("div", null, 
+			React.createElement("div", {className: "dashboard"}, 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
-				React.createElement("form", null, 
 				React.createElement(EditableText, {title: "Name", placeHolder: this.context.userData? this.context.userData.userName : 'loading...', keyName: "userName", onChange: this.update}), 
 				React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update}), 
 				React.createElement(EditableDropDown, {title: "Default 'From' Language", placeHolder: this.context.userData? this.context.userData.defaultFrom : 'loading', keyName: "defaultFrom", selectionData: langData, onChange: this.update}), 
 				React.createElement(EditableDropDown, {title: "Default 'To' Language", placeHolder: this.context.userData? this.context.userData.defaultTo : 'loading', keyName: "defaultTo", selectionData: langData, onChange: this.update})
-				)
 			)
 		);
 	}
@@ -27132,6 +27130,10 @@ var EditableSelect = React.createClass({displayName: "EditableSelect",
 		this.setState({editing: false});
 		this.props.onChange(this.refs.newSelection.value, this.props.keyName);
 	},
+	cancel: function(e){
+		e.preventDefault();
+		this.setState({editing: false});
+	},
 	renderDisplay: function(){
 		//get the display language based on lang code for display
 		var code = this.props.placeHolder;
@@ -27149,13 +27151,16 @@ var EditableSelect = React.createClass({displayName: "EditableSelect",
 	},
 	renderForm: function(){
 		return (
-				React.createElement("div", {className: "form-group"}, 
-					React.createElement("label", null, this.props.title), 
-					React.createElement("select", {ref: "newSelection", className: "form-control", defaultValue: this.props.placeHolder}, 
-						React.createElement("option", {value: "none"}, "None "), 
-						this.props.selectionData.map(this.createSelectItem)
-					), 
-					React.createElement("button", {type: "submit", className: "btn btn-small btn-default", onClick: this.save}, "Save")
+				React.createElement("form", {className: "form-inline"}, 
+					React.createElement("div", {className: "form-group"}, 
+						React.createElement("label", null, this.props.title, ":   "), 
+						React.createElement("select", {ref: "newSelection", className: "form-control", defaultValue: this.props.placeHolder}, 
+							React.createElement("option", {value: "none"}, "None "), 
+							this.props.selectionData.map(this.createSelectItem)
+						), 
+						React.createElement("button", {type: "submit", className: "btn btn-small btn-success", onClick: this.save}, "Save"), 
+						React.createElement("button", {className: "btn btn-small btn-warning", onClick: this.cancel}, "Cancel")
+					)
 				)
 			);
 	},
@@ -27184,10 +27189,13 @@ var EditableText = React.createClass({displayName: "EditableText",
 	renderForm: function(){
 		//to fix: make save button inline
 		return (
-			React.createElement("div", {className: "form-group"}, 
-				React.createElement("label", null, React.createElement("strong", null, this.props.title, ": ")), 
-				React.createElement("input", {type: "text", ref: "newText", defaultValue: this.props.placeHolder, className: "form-control"}), 
-				React.createElement("button", {onClick: this.save, type: "submit", className: "btn btn-success btn-small"}, "Save")
+			React.createElement("form", {className: "form-inline"}, 
+				React.createElement("div", {className: "form-group"}, 
+					React.createElement("label", null, React.createElement("strong", null, this.props.title, ": ")), 
+					React.createElement("input", {type: "text", ref: "newText", defaultValue: this.props.placeHolder, className: "form-control"}), 
+					React.createElement("button", {onClick: this.save, type: "submit", className: "btn btn-success btn-small"}, "Save"), 
+					React.createElement("button", {onClick: this.cancel, className: "btn btn-warning btn-small"}, "Cancel")
+				)
 			))
 	},
 	renderDisplay: function(){
@@ -27199,6 +27207,10 @@ var EditableText = React.createClass({displayName: "EditableText",
 		e.preventDefault();
 		this.setState({editing: false});
 		this.props.onChange(this.refs.newText.value, this.props.keyName);
+	},
+	cancel: function(e){
+		e.preventDefault();
+		this.setState({editing: false});
 	},
 	edit: function(){
 		this.setState({editing: true});

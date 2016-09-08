@@ -25,14 +25,16 @@ body {
 	width: 75%;
 }
 
-form {
-	width: 75%;
+
+
+div.dashboard label {
+	font-size: 18px;
 }
 
-form h4 {
+div.dashboard h4 {
 	margin-bottom: 20px;
 }
 
-h4 button.btn.btn-small.btn-default{
+div.dashboard h4 button.btn.btn-small.btn-default{
 	float: right;
 }

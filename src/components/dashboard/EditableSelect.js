@@ -13,6 +13,10 @@ var EditableSelect = React.createClass({
 		this.setState({editing: false});
 		this.props.onChange(this.refs.newSelection.value, this.props.keyName);
 	},
+	cancel: function(e){
+		e.preventDefault();
+		this.setState({editing: false});
+	},
 	renderDisplay: function(){
 		//get the display language based on lang code for display
 		var code = this.props.placeHolder;
@@ -30,14 +34,17 @@ var EditableSelect = React.createClass({
 	},
 	renderForm: function(){
 		return (
-				<div className="form-group">
-					<label>{this.props.title}</label>
-					<select ref="newSelection" className="form-control" defaultValue={this.props.placeHolder}>
-						<option value="none">None </option>
-						{this.props.selectionData.map(this.createSelectItem)}
-					</select>
-					<button type="submit" className="btn btn-small btn-default" onClick={this.save}>Save</button>
-				</div>
+				<form className="form-inline">
+					<div className="form-group">
+						<label>{this.props.title}:   </label>
+						<select ref="newSelection" className="form-control" defaultValue={this.props.placeHolder}>
+							<option value="none">None </option>
+							{this.props.selectionData.map(this.createSelectItem)}
+						</select>
+						<button type="submit" className="btn btn-small btn-success" onClick={this.save}>Save</button>
+						<button className="btn btn-small btn-warning" onClick={this.cancel}>Cancel</button>
+					</div>
+				</form>
 			);
 	},
 	render: function(){
