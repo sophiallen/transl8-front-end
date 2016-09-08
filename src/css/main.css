@@ -19,6 +19,14 @@ body {
 	width: 75%;
 }
 
+form {
+	width: 75%;
+}
+
+form h4 {
+	margin-bottom: 20px;
+}
+
 h4 button.btn.btn-small.btn-default{
-	margin-left: 1em;
+	float: right;
 }

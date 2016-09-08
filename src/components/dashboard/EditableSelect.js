@@ -14,8 +14,14 @@ var EditableSelect = React.createClass({
 		this.props.onChange(this.refs.newSelection.value, this.props.keyName);
 	},
 	renderDisplay: function(){
+		//get the display language based on lang code for display
+		var code = this.props.placeHolder;
+		var displayLang = this.props.selectionData.find(function(item){
+			return item.langCode === code;
+		});
+
 		return (<h4>
-					<strong>{this.props.title}: </strong>{this.props.placeHolder} 
+					<strong>{this.props.title}: </strong> {displayLang? displayLang.langName : 'loading...'}
 					<button className="btn btn-small btn-default" onClick={this.edit}>Edit</button>
 				</h4>)
 	},
@@ -23,11 +29,10 @@ var EditableSelect = React.createClass({
 		return <option key={index} value={item.langCode}>{item.langName}</option>
 	},
 	renderForm: function(){
-		//Todo: extract the language name for placeholder, instead of langcode.
 		return (
 				<div className="form-group">
 					<label>{this.props.title}</label>
-					<select ref="newSelection" className="form-control">
+					<select ref="newSelection" className="form-control" defaultValue={this.props.placeHolder}>
 						<option value="none">None </option>
 						{this.props.selectionData.map(this.createSelectItem)}
 					</select>

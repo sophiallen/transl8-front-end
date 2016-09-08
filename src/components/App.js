@@ -42,14 +42,12 @@ var HomePage = React.createClass({
 		});
 	},
 	updateUserDetail: function(newDetails){
-		console.log('in app update details, newDetails: ' + newDetails);
 		this.setState({userDetails: newDetails});
 	},
 	childContextTypes: {
 		userData: React.PropTypes.object
 	},
 	getChildContext: function(){
-		console.log('in get child context: userDetails: ' + this.state.userDetails);
 		return {userData: this.state.userDetails}
 	},
 	render: function(){

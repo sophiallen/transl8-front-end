@@ -84,6 +84,6 @@ var languages = [
 	{langName: 'Javanese', langCode: 'jv'},
 	{langName: 'Japanese', langCode: ''},
 	{langName: '', langCode: 'ja'}
-]
+];
 
 module.exports = languages;

@@ -26774,14 +26774,12 @@ var HomePage = React.createClass({displayName: "HomePage",
 		});
 	},
 	updateUserDetail: function(newDetails){
-		console.log('in app update details, newDetails: ' + newDetails);
 		this.setState({userDetails: newDetails});
 	},
 	childContextTypes: {
 		userData: React.PropTypes.object
 	},
 	getChildContext: function(){
-		console.log('in get child context: userDetails: ' + this.state.userDetails);
 		return {userData: this.state.userDetails}
 	},
 	render: function(){
@@ -26842,7 +26840,6 @@ var dashboard = React.createClass({displayName: "dashboard",
 		updates['/users/' + this.props.currentUser.uid + '/' + keyName] = newDetailData;
 		var that = this;
 
-		console.log('in dash update, details: ' + details);
 		this.props.onChange(details);
 
 		firebase.database().ref().update(updates).then(function(response){
@@ -26851,14 +26848,16 @@ var dashboard = React.createClass({displayName: "dashboard",
 		});
 	},
 	render: function(){
+
 		return (
 			React.createElement("div", null, 
-				React.createElement("h1", null, "Welcome, ", this.context.userData? this.context.userData.userName: 'Loading...'), 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
-
+				React.createElement("form", null, 
 				React.createElement(EditableText, {title: "Name", placeHolder: this.context.userData? this.context.userData.userName : 'loading...', keyName: "userName", onChange: this.update}), 
 				React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update}), 
-				React.createElement(EditableDropDown, {title: "From Language", placeHolder: this.context.userData? this.context.userData.defaultFrom : 'loading', keyName: "defaultFrom", selectionData: langData, onChange: this.update})
+				React.createElement(EditableDropDown, {title: "Default 'From' Language", placeHolder: this.context.userData? this.context.userData.defaultFrom : 'loading', keyName: "defaultFrom", selectionData: langData, onChange: this.update}), 
+				React.createElement(EditableDropDown, {title: "Default 'To' Language", placeHolder: this.context.userData? this.context.userData.defaultTo : 'loading', keyName: "defaultTo", selectionData: langData, onChange: this.update})
+				)
 			)
 		);
 	}
@@ -27134,8 +27133,14 @@ var EditableSelect = React.createClass({displayName: "EditableSelect",
 		this.props.onChange(this.refs.newSelection.value, this.props.keyName);
 	},
 	renderDisplay: function(){
+		//get the display language based on lang code for display
+		var code = this.props.placeHolder;
+		var displayLang = this.props.selectionData.find(function(item){
+			return item.langCode === code;
+		});
+
 		return (React.createElement("h4", null, 
-					React.createElement("strong", null, this.props.title, ": "), this.props.placeHolder, 
+					React.createElement("strong", null, this.props.title, ": "), " ", displayLang? displayLang.langName : 'loading...', 
 					React.createElement("button", {className: "btn btn-small btn-default", onClick: this.edit}, "Edit")
 				))
 	},
@@ -27143,11 +27148,10 @@ var EditableSelect = React.createClass({displayName: "EditableSelect",
 		return React.createElement("option", {key: index, value: item.langCode}, item.langName)
 	},
 	renderForm: function(){
-		//Todo: extract the language name for placeholder, instead of langcode.
 		return (
 				React.createElement("div", {className: "form-group"}, 
 					React.createElement("label", null, this.props.title), 
-					React.createElement("select", {ref: "newSelection", className: "form-control"}, 
+					React.createElement("select", {ref: "newSelection", className: "form-control", defaultValue: this.props.placeHolder}, 
 						React.createElement("option", {value: "none"}, "None "), 
 						this.props.selectionData.map(this.createSelectItem)
 					), 
@@ -27182,7 +27186,7 @@ var EditableText = React.createClass({displayName: "EditableText",
 		return (
 			React.createElement("div", {className: "form-group"}, 
 				React.createElement("label", null, React.createElement("strong", null, this.props.title, ": ")), 
-				React.createElement("input", {type: "text", ref: "newText", placeholder: this.props.placeHolder, className: "form-control"}), 
+				React.createElement("input", {type: "text", ref: "newText", defaultValue: this.props.placeHolder, className: "form-control"}), 
 				React.createElement("button", {onClick: this.save, type: "submit", className: "btn btn-success btn-small"}, "Save")
 			))
 	},
@@ -27372,7 +27376,7 @@ var languages = [
 	{langName: 'Javanese', langCode: 'jv'},
 	{langName: 'Japanese', langCode: ''},
 	{langName: '', langCode: 'ja'}
-]
+];
 
 module.exports = languages;
 
