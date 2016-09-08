@@ -26771,24 +26771,17 @@ var HomePage = React.createClass({displayName: "HomePage",
 		});
 		userRef.on('child_changed', function(data){ //listen for changes in user details
 			console.log('heard change in data');
-			that.updateUserDetail(data.val());
-			//that.setState({userDetails: data.val()});
 		});
 	},
 	updateUserDetail: function(newDetails){
+		console.log('in app update details, newDetails: ' + newDetails);
 		this.setState({userDetails: newDetails});
 	},
 	childContextTypes: {
 		userData: React.PropTypes.object
 	},
 	getChildContext: function(){
-		// if (!this.state.userDetails && this.state.loggedIn){
-		// 	var details = this.getUserDetails();
-		// 	console.log('in getChildContext, heard login, fetching details...');
-		// 	this.updateUserDetail(details);
-		// 	return {userData: details}
-		// } 
-		console.log('in child context: userDetails: ' + this.state.userDetails);
+		console.log('in get child context: userDetails: ' + this.state.userDetails);
 		return {userData: this.state.userDetails}
 	},
 	render: function(){
@@ -26796,7 +26789,7 @@ var HomePage = React.createClass({displayName: "HomePage",
 			React.createElement("div", null, 
 				React.createElement(NavBar, {loggedIn: this.state.loggedIn}), 
 				React.createElement("div", {className: "pageContent"}, 
-					React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser, userDetails: this.state.userDetails, onChange: this.updateUserDetail})
+					React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser, onChange: this.updateUserDetail})
 				)
 			)
 			);
@@ -26816,17 +26809,12 @@ var dashboard = React.createClass({displayName: "dashboard",
 		userData: React.PropTypes.object
 	},
 	getInitialState: function(){
-		console.log('in dash getInitial, user: ' + this.props.currentUser);
-		return {
-			userDetails: this.props.userDetails
-		};
+		return {};
 	},
 	componentWillMount: function(){
 		//small optimization: check to see if redirected from login as check for login status.
 		var justLoggedIn = (this.props.location.state && this.props.location.state.loggedIn);
 		
-		console.log('in dash, context.userData: ' + this.context.userData);
-
 		if (!this.props.loggedIn && !justLoggedIn) {
 			var thisRouter = this.context.router;
 			var that = this;
@@ -26847,27 +26835,28 @@ var dashboard = React.createClass({displayName: "dashboard",
 	update: function(newDetailData, keyName){
 		var details = this.context.userData;
 		details[keyName] = newDetailData;
-		this.setState({userDetails: details});
 
 		var updates = {};
 		updates['/users/' + this.props.currentUser.uid + '/' + keyName] = newDetailData;
 		var that = this;
+
+		console.log('in dash update, details: ' + details);
+		this.props.onChange(details);
+
 		firebase.database().ref().update(updates).then(function(response){
+			console.log('in firebase promise, details: ' + details);
 			that.props.onChange(details);
 		});
 	},
 	render: function(){
-				//temp hardcoded, need to go back and fix this...
-		var userName = this.state.userDetails? this.state.userDetails.userName : 'unknown';
-		var phone = this.state.userDetails? this.state.userDetails.phone : 'unknown';
 		return (
 			React.createElement("div", null, 
 				React.createElement("h1", null, "Welcome, ", this.context.userData? this.context.userData.userName: 'Loading...'), 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
 
 				React.createElement(EditableText, {title: "Name", placeHolder: this.context.userData? this.context.userData.userName : 'loading...', keyName: "userName", onChange: this.update}), 
-				React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update})
-
+				React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update}), 
+				"//dropdowns will go here..."
 			)
 		);
 	}
@@ -26880,9 +26869,6 @@ var React = require('react');
 var Link = require('react-router').Link;
 
 module.exports = React.createClass({displayName: "exports",
-	contextTypes: {
-		userData: React.PropTypes.object
-	},
 	render: function(){
 		console.log('in home render, userData: ' + this.context.userData);
 		return (
@@ -27141,19 +27127,21 @@ var EditableText = React.createClass({displayName: "EditableText",
 		}
 	},
 	renderForm: function(){
+		//to fix: make save button inline
 		return (
 			React.createElement("div", {className: "form-group"}, 
-				React.createElement("label", null, this.props.title), 
+				React.createElement("label", null, React.createElement("strong", null, this.props.title, ": ")), 
 				React.createElement("input", {type: "text", ref: "newText", placeholder: this.props.placeHolder, className: "form-control"}), 
-				React.createElement("button", {onClick: this.save, className: "btn btn-success btn-small"}, "Save")
+				React.createElement("button", {onClick: this.save, type: "submit", className: "btn btn-success btn-small"}, "Save")
 			))
 	},
 	renderDisplay: function(){
-		return (React.createElement("h4", null, this.props.title, ": ", this.props.placeHolder, 
+		return (React.createElement("h4", null, React.createElement("strong", null, this.props.title, ": "), this.props.placeHolder, 
 					React.createElement("button", {className: "btn btn-small btn-default", onClick: this.edit}, "Edit")
 				));
 	},
-	save: function(){
+	save: function(e){
+		e.preventDefault();
 		this.setState({editing: false});
 		this.props.onChange(this.refs.newText.value, this.props.keyName);
 	},

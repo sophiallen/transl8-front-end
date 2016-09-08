@@ -39,24 +39,17 @@ var HomePage = React.createClass({
 		});
 		userRef.on('child_changed', function(data){ //listen for changes in user details
 			console.log('heard change in data');
-			that.updateUserDetail(data.val());
-			//that.setState({userDetails: data.val()});
 		});
 	},
 	updateUserDetail: function(newDetails){
+		console.log('in app update details, newDetails: ' + newDetails);
 		this.setState({userDetails: newDetails});
 	},
 	childContextTypes: {
 		userData: React.PropTypes.object
 	},
 	getChildContext: function(){
-		// if (!this.state.userDetails && this.state.loggedIn){
-		// 	var details = this.getUserDetails();
-		// 	console.log('in getChildContext, heard login, fetching details...');
-		// 	this.updateUserDetail(details);
-		// 	return {userData: details}
-		// } 
-		console.log('in child context: userDetails: ' + this.state.userDetails);
+		console.log('in get child context: userDetails: ' + this.state.userDetails);
 		return {userData: this.state.userDetails}
 	},
 	render: function(){
@@ -64,7 +57,7 @@ var HomePage = React.createClass({
 			<div>
 				<NavBar loggedIn={this.state.loggedIn}/>
 				<div className="pageContent">
-					{React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser, userDetails: this.state.userDetails, onChange: this.updateUserDetail})}
+					{React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser, onChange: this.updateUserDetail})}
 				</div>
 			</div>
 			);

@@ -9,19 +9,21 @@ var EditableText = React.createClass({
 		}
 	},
 	renderForm: function(){
+		//to fix: make save button inline
 		return (
 			<div className="form-group">
-				<label>{this.props.title}</label>
+				<label><strong>{this.props.title}: </strong></label>
 				<input type="text" ref="newText" placeholder={this.props.placeHolder} className="form-control"/>
-				<button onClick={this.save} className="btn btn-success btn-small">Save</button>
+				<button onClick={this.save} type="submit" className="btn btn-success btn-small">Save</button>
 			</div>)
 	},
 	renderDisplay: function(){
-		return (<h4>{this.props.title}: {this.props.placeHolder} 
+		return (<h4><strong>{this.props.title}: </strong>{this.props.placeHolder} 
 					<button className="btn btn-small btn-default" onClick={this.edit}>Edit</button>
 				</h4>);
 	},
-	save: function(){
+	save: function(e){
+		e.preventDefault();
 		this.setState({editing: false});
 		this.props.onChange(this.refs.newText.value, this.props.keyName);
 	},

@@ -2,9 +2,6 @@ var React = require('react');
 var Link = require('react-router').Link;
 
 module.exports = React.createClass({
-	contextTypes: {
-		userData: React.PropTypes.object
-	},
 	render: function(){
 		console.log('in home render, userData: ' + this.context.userData);
 		return (

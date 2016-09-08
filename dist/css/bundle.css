@@ -24,3 +24,7 @@ body {
 	padding: 2em;
 	width: 75%;
 }
+
+h4 button.btn.btn-small.btn-default{
+	margin-left: 1em;
+}
