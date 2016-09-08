@@ -19,7 +19,7 @@ var config = {
 			'node_modules/bootstrap/dist/css/bootstrap.min.css',  
 			'./src/css/*.css'
 		],
-		mainJs: './src/main.js',
+		mainJs: './src/index.js',
 		dist: './dist'
 	}
 }

@@ -19,7 +19,7 @@ var EditableText = React.createClass({
 	},
 	renderDisplay: function(){
 		return (<h4><strong>{this.props.title}: </strong>{this.props.placeHolder} 
-					<button className="btn btn-small btn-default" onClick={this.edit}>Edit</button>
+					<button type="submit" className="btn btn-small btn-default" onClick={this.edit}>Edit</button>
 				</h4>);
 	},
 	save: function(e){

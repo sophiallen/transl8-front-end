@@ -26802,6 +26802,8 @@ module.exports = HomePage;
 var React = require('react');
 var firebase = require('firebase');
 var EditableText = require('./dashboard/EditableText.js');
+var EditableDropDown = require('./dashboard/EditableSelect.js');
+var langData = require('./../data/languages.js');
 
 var dashboard = React.createClass({displayName: "dashboard",
 	contextTypes: { //allow access to router via context
@@ -26856,7 +26858,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 				React.createElement(EditableText, {title: "Name", placeHolder: this.context.userData? this.context.userData.userName : 'loading...', keyName: "userName", onChange: this.update}), 
 				React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update}), 
-				"//dropdowns will go here..."
+				React.createElement(EditableDropDown, {title: "From Language", placeHolder: this.context.userData? this.context.userData.defaultFrom : 'loading', keyName: "defaultFrom", selectionData: langData, onChange: this.update})
 			)
 		);
 	}
@@ -26864,7 +26866,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 module.exports = dashboard;
 
-},{"./dashboard/EditableText.js":248,"firebase":3,"react":237}],241:[function(require,module,exports){
+},{"./../data/languages.js":251,"./dashboard/EditableSelect.js":248,"./dashboard/EditableText.js":249,"firebase":3,"react":237}],241:[function(require,module,exports){
 var React = require('react');
 var Link = require('react-router').Link;
 
@@ -27119,6 +27121,55 @@ module.exports = Register;
 var React = require('react');
 
 
+var EditableSelect = React.createClass({displayName: "EditableSelect",
+	getInitialState: function(){
+		return {editing: false}
+	},
+	edit: function(){
+		this.setState({editing: true});
+	},
+	save: function(e){
+		e.preventDefault();
+		this.setState({editing: false});
+		this.props.onChange(this.refs.newSelection.value, this.props.keyName);
+	},
+	renderDisplay: function(){
+		return (React.createElement("h4", null, 
+					React.createElement("strong", null, this.props.title, ": "), this.props.placeHolder, 
+					React.createElement("button", {className: "btn btn-small btn-default", onClick: this.edit}, "Edit")
+				))
+	},
+	createSelectItem: function(item, index){
+		return React.createElement("option", {key: index, value: item.langCode}, item.langName)
+	},
+	renderForm: function(){
+		//Todo: extract the language name for placeholder, instead of langcode.
+		return (
+				React.createElement("div", {className: "form-group"}, 
+					React.createElement("label", null, this.props.title), 
+					React.createElement("select", {ref: "newSelection", className: "form-control"}, 
+						React.createElement("option", {value: "none"}, "None "), 
+						this.props.selectionData.map(this.createSelectItem)
+					), 
+					React.createElement("button", {type: "submit", className: "btn btn-small btn-default", onClick: this.save}, "Save")
+				)
+			);
+	},
+	render: function(){
+		if (this.state.editing){
+			return this.renderForm();
+		} else {
+			return this.renderDisplay();
+		}
+	}
+});
+
+module.exports = EditableSelect;
+
+},{"react":237}],249:[function(require,module,exports){
+var React = require('react');
+
+
 var EditableText = React.createClass({displayName: "EditableText",
 	//recieves props: placeHolder, keyName
 	getInitialState: function(){
@@ -27137,7 +27188,7 @@ var EditableText = React.createClass({displayName: "EditableText",
 	},
 	renderDisplay: function(){
 		return (React.createElement("h4", null, React.createElement("strong", null, this.props.title, ": "), this.props.placeHolder, 
-					React.createElement("button", {className: "btn btn-small btn-default", onClick: this.edit}, "Edit")
+					React.createElement("button", {type: "submit", className: "btn btn-small btn-default", onClick: this.edit}, "Edit")
 				));
 	},
 	save: function(e){
@@ -27159,7 +27210,7 @@ var EditableText = React.createClass({displayName: "EditableText",
 
 module.exports = EditableText;
 
-},{"react":237}],249:[function(require,module,exports){
+},{"react":237}],250:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var Link = require('react-router').Link;
@@ -27234,7 +27285,7 @@ var UserDataForm = React.createClass({displayName: "UserDataForm",
 });
 
 module.exports = UserDataForm;
-},{"./../../data/languages.js":250,"firebase":3,"react":237,"react-router":35}],250:[function(require,module,exports){
+},{"./../../data/languages.js":251,"firebase":3,"react":237,"react-router":35}],251:[function(require,module,exports){
 var languages = [
 	{langName: 'Azerbaijan', langCode: 'az'},
 	{langName: 'Albanian', langCode: 'sq'},
@@ -27325,7 +27376,7 @@ var languages = [
 
 module.exports = languages;
 
-},{}],251:[function(require,module,exports){
+},{}],252:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -27333,7 +27384,7 @@ var routes = require('./router.js');
 
 ReactDOM.render(routes, document.getElementById('app'));
 
-},{"./router.js":252,"react":237,"react-dom":5}],252:[function(require,module,exports){
+},{"./router.js":253,"react":237,"react-dom":5}],253:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
@@ -27377,7 +27428,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/About.js":238,"./components/App.js":239,"./components/Dashboard.js":240,"./components/Home.js":241,"./components/LogOut.js":242,"./components/Login.js":243,"./components/NotFound.js":245,"./components/ParamSample.js":246,"./components/Register.js":247,"./components/dashboard/UserDataForm.js":249,"./utils/authenticate.js":253,"react":237,"react-dom":5,"react-router":35}],253:[function(require,module,exports){
+},{"./components/About.js":238,"./components/App.js":239,"./components/Dashboard.js":240,"./components/Home.js":241,"./components/LogOut.js":242,"./components/Login.js":243,"./components/NotFound.js":245,"./components/ParamSample.js":246,"./components/Register.js":247,"./components/dashboard/UserDataForm.js":250,"./utils/authenticate.js":254,"react":237,"react-dom":5,"react-router":35}],254:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var config = require('./../../firebase.config.js');
@@ -27401,4 +27452,4 @@ function requireAuth(nextState, replace){
 
 module.exports = requireAuth;
 
-},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[251]);
+},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[252]);

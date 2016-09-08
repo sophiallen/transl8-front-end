@@ -1,6 +1,8 @@
 var React = require('react');
 var firebase = require('firebase');
 var EditableText = require('./dashboard/EditableText.js');
+var EditableDropDown = require('./dashboard/EditableSelect.js');
+var langData = require('./../data/languages.js');
 
 var dashboard = React.createClass({
 	contextTypes: { //allow access to router via context
@@ -55,7 +57,7 @@ var dashboard = React.createClass({
 
 				<EditableText title="Name" placeHolder={this.context.userData? this.context.userData.userName : 'loading...'} keyName="userName" onChange={this.update} />
 				<EditableText title="Phone Number" placeHolder={this.context.userData? this.context.userData.phone : 'loading...'} keyName="phone" onChange={this.update} />
-				//dropdowns will go here...
+				<EditableDropDown title="From Language" placeHolder={this.context.userData? this.context.userData.defaultFrom : 'loading'} keyName="defaultFrom" selectionData={langData} onChange={this.update} />
 			</div>
 		);
 	}
