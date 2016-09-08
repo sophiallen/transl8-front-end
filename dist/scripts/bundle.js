@@ -26845,7 +26845,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 		} 
 	},
 	update: function(newDetailData, keyName){
-		var details = this.state.userDetails;
+		var details = this.context.userData;
 		details[keyName] = newDetailData;
 		this.setState({userDetails: details});
 
