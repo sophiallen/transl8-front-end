@@ -26791,7 +26791,7 @@ var HomePage = React.createClass({displayName: "HomePage",
 				)
 			)
 			);
-	},
+	}
 });
 
 module.exports = HomePage;
