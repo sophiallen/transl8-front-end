@@ -3,6 +3,7 @@ var firebase = require('firebase');
 var EditableText = require('./dashboard/EditableText.js');
 var EditableDropDown = require('./dashboard/EditableSelect.js');
 var ActivityGrid = require('./dashboard/ActivityGrid.js');
+var Flashcard = require('./dashboard/Flashcard.js');
 var langData = require('./../data/languages.js');
 
 var dashboard = React.createClass({
@@ -89,6 +90,9 @@ var dashboard = React.createClass({
 					<h3>Recent Translations</h3>
 					{activityView}	
 					<button className="btn btn-danger" onClick={this.addSampleData}>Add Sample Data</button>
+				</div>
+				<div className="flashCards">
+					<Flashcard />
 				</div>
 			</div>
 		);

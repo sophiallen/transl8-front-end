@@ -27215,6 +27215,7 @@ var firebase = require('firebase');
 var EditableText = require('./dashboard/EditableText.js');
 var EditableDropDown = require('./dashboard/EditableSelect.js');
 var ActivityGrid = require('./dashboard/ActivityGrid.js');
+var Flashcard = require('./dashboard/Flashcard.js');
 var langData = require('./../data/languages.js');
 
 var dashboard = React.createClass({displayName: "dashboard",
@@ -27301,6 +27302,9 @@ var dashboard = React.createClass({displayName: "dashboard",
 					React.createElement("h3", null, "Recent Translations"), 
 					activityView, 	
 					React.createElement("button", {className: "btn btn-danger", onClick: this.addSampleData}, "Add Sample Data")
+				), 
+				React.createElement("div", {className: "flashCards"}, 
+					React.createElement(Flashcard, null)
 				)
 			)
 		);
@@ -27309,7 +27313,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 module.exports = dashboard;
 
-},{"./../data/languages.js":254,"./dashboard/ActivityGrid.js":249,"./dashboard/EditableSelect.js":251,"./dashboard/EditableText.js":252,"firebase":3,"react":237}],242:[function(require,module,exports){
+},{"./../data/languages.js":255,"./dashboard/ActivityGrid.js":249,"./dashboard/EditableSelect.js":251,"./dashboard/EditableText.js":252,"./dashboard/Flashcard.js":253,"firebase":3,"react":237}],242:[function(require,module,exports){
 var React = require('react');
 var Link = require('react-router').Link;
 
@@ -27756,6 +27760,40 @@ module.exports = EditableText;
 
 },{"react":237}],253:[function(require,module,exports){
 var React = require('react');
+
+var Flashcard = React.createClass({displayName: "Flashcard",
+	getInitialState: function(){
+		return {flipped: false}
+	},
+	flip: function(){
+		this.setState({flipped: !this.state.flipped});
+	},
+	render: function(){
+		var flipClass = this.state.flipped? 'flip-container flipped' : 'flip-container';
+
+		return (
+			React.createElement("div", {className: flipClass, onClick: this.flip}, 
+				React.createElement("div", {className: "flipper"}, 
+						React.createElement("div", {className: "front"}, 
+							React.createElement("p", null, "Front Content"), 
+							React.createElement("p", null, "Front Content"), 
+							React.createElement("p", null, "Front Content")
+						), 
+						React.createElement("div", {className: "back"}, 
+							React.createElement("p", null, "Back Content"), 			
+							React.createElement("p", null, "Back Content"), 			
+							React.createElement("p", null, "Back Content")			
+						)
+				)
+			)
+		)
+	}
+});
+
+module.exports = Flashcard;
+
+},{"react":237}],254:[function(require,module,exports){
+var React = require('react');
 var firebase = require('firebase');
 var Link = require('react-router').Link;
 var langData = require('./../../data/languages.js');
@@ -27829,7 +27867,7 @@ var UserDataForm = React.createClass({displayName: "UserDataForm",
 });
 
 module.exports = UserDataForm;
-},{"./../../data/languages.js":254,"firebase":3,"react":237,"react-router":35}],254:[function(require,module,exports){
+},{"./../../data/languages.js":255,"firebase":3,"react":237,"react-router":35}],255:[function(require,module,exports){
 var languages = [
 	{langName: 'Azerbaijan', langCode: 'az'},
 	{langName: 'Albanian', langCode: 'sq'},
@@ -27920,7 +27958,7 @@ var languages = [
 
 module.exports = languages;
 
-},{}],255:[function(require,module,exports){
+},{}],256:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -27928,7 +27966,7 @@ var routes = require('./router.js');
 
 ReactDOM.render(routes, document.getElementById('app'));
 
-},{"./router.js":256,"react":237,"react-dom":5}],256:[function(require,module,exports){
+},{"./router.js":257,"react":237,"react-dom":5}],257:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
@@ -27972,7 +28010,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/About.js":239,"./components/App.js":240,"./components/Dashboard.js":241,"./components/Home.js":242,"./components/LogOut.js":243,"./components/Login.js":244,"./components/NotFound.js":246,"./components/ParamSample.js":247,"./components/Register.js":248,"./components/dashboard/UserDataForm.js":253,"./utils/authenticate.js":257,"react":237,"react-dom":5,"react-router":35}],257:[function(require,module,exports){
+},{"./components/About.js":239,"./components/App.js":240,"./components/Dashboard.js":241,"./components/Home.js":242,"./components/LogOut.js":243,"./components/Login.js":244,"./components/NotFound.js":246,"./components/ParamSample.js":247,"./components/Register.js":248,"./components/dashboard/UserDataForm.js":254,"./utils/authenticate.js":258,"react":237,"react-dom":5,"react-router":35}],258:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var config = require('./../../firebase.config.js');
@@ -27996,4 +28034,4 @@ function requireAuth(nextState, replace){
 
 module.exports = requireAuth;
 
-},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[255]);
+},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[256]);
