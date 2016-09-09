@@ -15,8 +15,8 @@ var EditableText = React.createClass({
 				<div className="form-group">
 					<label><strong>{this.props.title}: </strong></label>
 					<input type="text" ref="newText" defaultValue={this.props.placeHolder} className="form-control"/>
-					<button onClick={this.save} type="submit" className="btn btn-success btn-small">Save</button>
-					<button onClick={this.cancel} className="btn btn-warning btn-small">Cancel</button>
+					<button onClick={this.save} type="submit" className="btn btn-success btn-small pull-right">Save</button>
+					<button onClick={this.cancel} className="btn btn-warning btn-small pull-right">Cancel</button>
 				</div>
 			</form>)
 	},

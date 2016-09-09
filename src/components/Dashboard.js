@@ -2,6 +2,7 @@ var React = require('react');
 var firebase = require('firebase');
 var EditableText = require('./dashboard/EditableText.js');
 var EditableDropDown = require('./dashboard/EditableSelect.js');
+var ActivityGrid = require('./dashboard/ActivityGrid.js');
 var langData = require('./../data/languages.js');
 
 var dashboard = React.createClass({
@@ -53,10 +54,19 @@ var dashboard = React.createClass({
 		return (
 			<div className="dashboard">
 				<h1 className="page-header">User Dashboard</h1>
-				<EditableText title="Name" placeHolder={this.context.userData? this.context.userData.userName : 'loading...'} keyName="userName" onChange={this.update} />
-				<EditableText title="Phone Number" placeHolder={this.context.userData? this.context.userData.phone : 'loading...'} keyName="phone" onChange={this.update} />
-				<EditableDropDown title="Default 'From' Language" placeHolder={this.context.userData? this.context.userData.defaultFrom : 'loading'} keyName="defaultFrom" selectionData={langData} onChange={this.update} />
-				<EditableDropDown title="Default 'To' Language" placeHolder={this.context.userData? this.context.userData.defaultTo : 'loading'} keyName="defaultTo" selectionData={langData} onChange={this.update} />
+
+				<div className="settings">
+					<h3>Account Settings</h3>
+					<EditableText title="Name" placeHolder={this.context.userData? this.context.userData.userName : 'loading...'} keyName="userName" onChange={this.update} />
+					<EditableText title="Phone Number" placeHolder={this.context.userData? this.context.userData.phone : 'loading...'} keyName="phone" onChange={this.update} />
+					<EditableDropDown title="Default 'From' Language" placeHolder={this.context.userData? this.context.userData.defaultFrom : 'loading'} keyName="defaultFrom" selectionData={langData} onChange={this.update} />
+					<EditableDropDown title="Default 'To' Language" placeHolder={this.context.userData? this.context.userData.defaultTo : 'loading'} keyName="defaultTo" selectionData={langData} onChange={this.update} />
+				</div>
+
+				<div className="activity-feed">
+					<h3>Recent Translations</h3>
+					<ActivityGrid />
+				</div>
 			</div>
 		);
 	}

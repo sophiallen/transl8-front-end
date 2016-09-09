@@ -59,7 +59,7 @@ var HomePage = React.createClass({
 				</div>
 			</div>
 			);
-	}
+	},
 });
 
 module.exports = HomePage;

@@ -26791,7 +26791,7 @@ var HomePage = React.createClass({displayName: "HomePage",
 				)
 			)
 			);
-	}
+	},
 });
 
 module.exports = HomePage;
@@ -26801,6 +26801,7 @@ var React = require('react');
 var firebase = require('firebase');
 var EditableText = require('./dashboard/EditableText.js');
 var EditableDropDown = require('./dashboard/EditableSelect.js');
+var ActivityGrid = require('./dashboard/ActivityGrid.js');
 var langData = require('./../data/languages.js');
 
 var dashboard = React.createClass({displayName: "dashboard",
@@ -26852,10 +26853,19 @@ var dashboard = React.createClass({displayName: "dashboard",
 		return (
 			React.createElement("div", {className: "dashboard"}, 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
-				React.createElement(EditableText, {title: "Name", placeHolder: this.context.userData? this.context.userData.userName : 'loading...', keyName: "userName", onChange: this.update}), 
-				React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update}), 
-				React.createElement(EditableDropDown, {title: "Default 'From' Language", placeHolder: this.context.userData? this.context.userData.defaultFrom : 'loading', keyName: "defaultFrom", selectionData: langData, onChange: this.update}), 
-				React.createElement(EditableDropDown, {title: "Default 'To' Language", placeHolder: this.context.userData? this.context.userData.defaultTo : 'loading', keyName: "defaultTo", selectionData: langData, onChange: this.update})
+
+				React.createElement("div", {className: "settings"}, 
+					React.createElement("h3", null, "Account Settings"), 
+					React.createElement(EditableText, {title: "Name", placeHolder: this.context.userData? this.context.userData.userName : 'loading...', keyName: "userName", onChange: this.update}), 
+					React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update}), 
+					React.createElement(EditableDropDown, {title: "Default 'From' Language", placeHolder: this.context.userData? this.context.userData.defaultFrom : 'loading', keyName: "defaultFrom", selectionData: langData, onChange: this.update}), 
+					React.createElement(EditableDropDown, {title: "Default 'To' Language", placeHolder: this.context.userData? this.context.userData.defaultTo : 'loading', keyName: "defaultTo", selectionData: langData, onChange: this.update})
+				), 
+
+				React.createElement("div", {className: "activity-feed"}, 
+					React.createElement("h3", null, "Recent Translations"), 
+					React.createElement(ActivityGrid, null)
+				)
 			)
 		);
 	}
@@ -26863,7 +26873,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 module.exports = dashboard;
 
-},{"./../data/languages.js":251,"./dashboard/EditableSelect.js":248,"./dashboard/EditableText.js":249,"firebase":3,"react":237}],241:[function(require,module,exports){
+},{"./../data/languages.js":253,"./dashboard/ActivityGrid.js":248,"./dashboard/EditableSelect.js":250,"./dashboard/EditableText.js":251,"firebase":3,"react":237}],241:[function(require,module,exports){
 var React = require('react');
 var Link = require('react-router').Link;
 
@@ -26872,7 +26882,7 @@ module.exports = React.createClass({displayName: "exports",
 		console.log('in home render, userData: ' + this.context.userData);
 		return (
 				React.createElement("div", null, 
-					React.createElement("h1", {className: "page-header"}, "Welcome to Transl8r"), 
+					React.createElement("h1", {className: "page-header"}, "Welcome to Transl8r ", React.createElement("small", null, "Powered by Yandex")), 
 					React.createElement("h4", null, "We're making mobile translation more accessible, one text at a time. ", React.createElement(Link, {to: "/register"}, "Let's get started!")), 
 					React.createElement("div", {className: "row"}, 
 						React.createElement("div", {className: "col-md-4"}, 
@@ -27116,6 +27126,52 @@ module.exports = Register;
 
 },{"firebase":3,"react":237}],248:[function(require,module,exports){
 var React = require('react');
+var ActivityItem = require('./ActivityItem.js');
+
+var ActivityGrid = React.createClass({displayName: "ActivityGrid",
+	render: function(){
+		return (
+				React.createElement("table", {className: "table table-hover"}, 
+					React.createElement("tbody", null, 
+						React.createElement("tr", {className: "th"}, 
+							React.createElement("td", null, "Select"), 
+							React.createElement("td", null, "Date"), 
+							React.createElement("td", null, "Direction"), 
+							React.createElement("td", null, "Untranslated"), 
+							React.createElement("td", null, "Translation")
+						), 
+						React.createElement(ActivityItem, {date: "7/23/2016", direction: "en-fr", text: "untranslated", translation: "translation"}), 
+						React.createElement(ActivityItem, {date: "7/27/2016", direction: "en-fr", text: "untranslated", translation: "translation"})
+					)
+				)
+			);
+	}
+});
+
+module.exports = ActivityGrid;
+},{"./ActivityItem.js":249,"react":237}],249:[function(require,module,exports){
+var React = require('react');
+
+var ActivityItem = React.createClass({displayName: "ActivityItem",
+	render: function(){
+		return (
+			React.createElement("tr", null, 
+				React.createElement("td", null, 
+					React.createElement("input", {type: "checkbox", ref: "checkbox"})
+				), 
+				React.createElement("td", null, this.props.date), 
+				React.createElement("td", null, this.props.direction), 
+				React.createElement("td", null, this.props.text), 
+				React.createElement("td", null, this.props.translation)
+			)
+		);
+	}
+});
+
+module.exports = ActivityItem;
+
+},{"react":237}],250:[function(require,module,exports){
+var React = require('react');
 
 
 var EditableSelect = React.createClass({displayName: "EditableSelect",
@@ -27158,8 +27214,8 @@ var EditableSelect = React.createClass({displayName: "EditableSelect",
 							React.createElement("option", {value: "none"}, "None "), 
 							this.props.selectionData.map(this.createSelectItem)
 						), 
-						React.createElement("button", {type: "submit", className: "btn btn-small btn-success", onClick: this.save}, "Save"), 
-						React.createElement("button", {className: "btn btn-small btn-warning", onClick: this.cancel}, "Cancel")
+						React.createElement("button", {type: "submit", className: "btn btn-small btn-success pull-right", onClick: this.save}, "Save"), 
+						React.createElement("button", {className: "btn btn-small btn-warning pull-right", onClick: this.cancel}, "Cancel")
 					)
 				)
 			);
@@ -27175,7 +27231,7 @@ var EditableSelect = React.createClass({displayName: "EditableSelect",
 
 module.exports = EditableSelect;
 
-},{"react":237}],249:[function(require,module,exports){
+},{"react":237}],251:[function(require,module,exports){
 var React = require('react');
 
 
@@ -27193,8 +27249,8 @@ var EditableText = React.createClass({displayName: "EditableText",
 				React.createElement("div", {className: "form-group"}, 
 					React.createElement("label", null, React.createElement("strong", null, this.props.title, ": ")), 
 					React.createElement("input", {type: "text", ref: "newText", defaultValue: this.props.placeHolder, className: "form-control"}), 
-					React.createElement("button", {onClick: this.save, type: "submit", className: "btn btn-success btn-small"}, "Save"), 
-					React.createElement("button", {onClick: this.cancel, className: "btn btn-warning btn-small"}, "Cancel")
+					React.createElement("button", {onClick: this.save, type: "submit", className: "btn btn-success btn-small pull-right"}, "Save"), 
+					React.createElement("button", {onClick: this.cancel, className: "btn btn-warning btn-small pull-right"}, "Cancel")
 				)
 			))
 	},
@@ -27226,7 +27282,7 @@ var EditableText = React.createClass({displayName: "EditableText",
 
 module.exports = EditableText;
 
-},{"react":237}],250:[function(require,module,exports){
+},{"react":237}],252:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var Link = require('react-router').Link;
@@ -27301,7 +27357,7 @@ var UserDataForm = React.createClass({displayName: "UserDataForm",
 });
 
 module.exports = UserDataForm;
-},{"./../../data/languages.js":251,"firebase":3,"react":237,"react-router":35}],251:[function(require,module,exports){
+},{"./../../data/languages.js":253,"firebase":3,"react":237,"react-router":35}],253:[function(require,module,exports){
 var languages = [
 	{langName: 'Azerbaijan', langCode: 'az'},
 	{langName: 'Albanian', langCode: 'sq'},
@@ -27392,7 +27448,7 @@ var languages = [
 
 module.exports = languages;
 
-},{}],252:[function(require,module,exports){
+},{}],254:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -27400,7 +27456,7 @@ var routes = require('./router.js');
 
 ReactDOM.render(routes, document.getElementById('app'));
 
-},{"./router.js":253,"react":237,"react-dom":5}],253:[function(require,module,exports){
+},{"./router.js":255,"react":237,"react-dom":5}],255:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
@@ -27444,7 +27500,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/About.js":238,"./components/App.js":239,"./components/Dashboard.js":240,"./components/Home.js":241,"./components/LogOut.js":242,"./components/Login.js":243,"./components/NotFound.js":245,"./components/ParamSample.js":246,"./components/Register.js":247,"./components/dashboard/UserDataForm.js":250,"./utils/authenticate.js":254,"react":237,"react-dom":5,"react-router":35}],254:[function(require,module,exports){
+},{"./components/About.js":238,"./components/App.js":239,"./components/Dashboard.js":240,"./components/Home.js":241,"./components/LogOut.js":242,"./components/Login.js":243,"./components/NotFound.js":245,"./components/ParamSample.js":246,"./components/Register.js":247,"./components/dashboard/UserDataForm.js":252,"./utils/authenticate.js":256,"react":237,"react-dom":5,"react-router":35}],256:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var config = require('./../../firebase.config.js');
@@ -27468,4 +27524,4 @@ function requireAuth(nextState, replace){
 
 module.exports = requireAuth;
 
-},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[252]);
+},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[254]);

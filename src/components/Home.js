@@ -6,7 +6,7 @@ module.exports = React.createClass({
 		console.log('in home render, userData: ' + this.context.userData);
 		return (
 				<div>
-					<h1 className="page-header">Welcome to Transl8r</h1>
+					<h1 className="page-header">Welcome to Transl8r <small>Powered by Yandex</small></h1>
 					<h4>We're making mobile translation more accessible, one text at a time. <Link to="/register">Let's get started!</Link></h4>
 					<div className="row">
 						<div className="col-md-4">

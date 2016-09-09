@@ -32,3 +32,15 @@ div.dashboard h4 {
 div.dashboard h4 button.btn.btn-small.btn-default{
 	float: right;
 }
+
+div.dashboard form.form-inline div.form-group{
+	display: block;
+}
+
+div.dashboard table.table-hover tbody tr:hover {
+	background-color: #eeeeee;
+}
+
+div.dashboard table.table-hover tbody tr.th:hover {
+	background-color: transparent;
+}

@@ -41,8 +41,8 @@ var EditableSelect = React.createClass({
 							<option value="none">None </option>
 							{this.props.selectionData.map(this.createSelectItem)}
 						</select>
-						<button type="submit" className="btn btn-small btn-success" onClick={this.save}>Save</button>
-						<button className="btn btn-small btn-warning" onClick={this.cancel}>Cancel</button>
+						<button type="submit" className="btn btn-small btn-success pull-right" onClick={this.save}>Save</button>
+						<button className="btn btn-small btn-warning pull-right" onClick={this.cancel}>Cancel</button>
 					</div>
 				</form>
 			);
