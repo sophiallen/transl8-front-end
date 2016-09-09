@@ -8,7 +8,8 @@ var langData = require('./../data/languages.js');
 var dashboard = React.createClass({
 	contextTypes: { //allow access to router via context
 		router: React.PropTypes.object.isRequired,
-		userData: React.PropTypes.object
+		userData: React.PropTypes.object,
+		userMessages: React.PropTypes.object
 	},
 	getInitialState: function(){
 		return {};
@@ -50,7 +51,12 @@ var dashboard = React.createClass({
 		});
 	},
 	render: function(){
-
+		var activityView;
+		if (this.props.currentUser){
+			activityView = <ActivityGrid user={this.props.currentUser}/>
+		} else {
+			activityView = <p>Loading data...</p>
+		}
 		return (
 			<div className="dashboard">
 				<h1 className="page-header">User Dashboard</h1>
@@ -65,7 +71,7 @@ var dashboard = React.createClass({
 
 				<div className="activity-feed">
 					<h3>Recent Translations</h3>
-					<ActivityGrid />
+					{activityView}	
 				</div>
 			</div>
 		);
