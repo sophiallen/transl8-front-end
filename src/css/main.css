@@ -53,7 +53,9 @@ div.settings {
 /* entire container, keeps perspective */
 .flip-container {
 	perspective: 1000px;
+	margin: 2em auto;
 }
+
 /* flip the pane when hovered */
 .flip-container.flipped .flipper, .flip-container.flipped .flipper {
 	transform: rotateY(180deg);
@@ -71,8 +73,11 @@ div.settings {
 .flipper {
 	transition: 0.6s;
 	transform-style: preserve-3d;
-
 	position: relative;
+}
+
+.flipper:hover {
+	cursor: pointer;
 }
 
 /* hide back of pane during swap */
