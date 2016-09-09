@@ -68,41 +68,8 @@ var HomePage = React.createClass({
 				<div className="pageContent">
 					{React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser, onChange: this.updateUserDetail})}
 				</div>
-				<button onClick={this.handleSubmit}>Add sample data</button>
 			</div>
 			);
-	},
-	handleSubmit: function(e){ //adding sample data to db
-		var today = new Date();
-		var message1 = {
-			date: today.toDateString(),
-			untranslated: 'hello world',
-			dir: 'en-es',
-			translated: 'hola mundo'
-		}
-		var message2 = {
-			date: today.toDateString(),
-			untranslated: 'hello world',
-			direction: 'en-fr',
-			translated: 'bonjour le monde'
-		}
-
-		var newPostKey = firebase.database().ref().child('user-messages/' + this.state.currentUser.uid).push().key;
-		console.log(newPostKey);
-
-		var updates = {};
-		updates['user-messages/' + this.state.currentUser.uid + '/' + newPostKey] = message2;
-		firebase.database().ref().update(updates);
-
-		// firebase.database().ref('user-messages/' + this.state.currentUser.uid).set({
-		// 	1: message1,
-		// 	2: message2
-		// }) .then(function(result){
-		// 	console.log('successfully saved data');
-		// }).catch(function(error){
-		// 	console.log('error: ' + error.message);
-		// });
-
 	}
 });
 

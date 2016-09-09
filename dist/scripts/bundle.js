@@ -27201,42 +27201,9 @@ var HomePage = React.createClass({displayName: "HomePage",
 				React.createElement(NavBar, {loggedIn: this.state.loggedIn}), 
 				React.createElement("div", {className: "pageContent"}, 
 					React.cloneElement(this.props.children, {loggedIn: this.state.loggedIn, currentUser: this.state.currentUser, onChange: this.updateUserDetail})
-				), 
-				React.createElement("button", {onClick: this.handleSubmit}, "Add sample data")
+				)
 			)
 			);
-	},
-	handleSubmit: function(e){ //adding sample data to db
-		var today = new Date();
-		var message1 = {
-			date: today.toDateString(),
-			untranslated: 'hello world',
-			dir: 'en-es',
-			translated: 'hola mundo'
-		}
-		var message2 = {
-			date: today.toDateString(),
-			untranslated: 'hello world',
-			direction: 'en-fr',
-			translated: 'bonjour le monde'
-		}
-
-		var newPostKey = firebase.database().ref().child('user-messages/' + this.state.currentUser.uid).push().key;
-		console.log(newPostKey);
-
-		var updates = {};
-		updates['user-messages/' + this.state.currentUser.uid + '/' + newPostKey] = message2;
-		firebase.database().ref().update(updates);
-
-		// firebase.database().ref('user-messages/' + this.state.currentUser.uid).set({
-		// 	1: message1,
-		// 	2: message2
-		// }) .then(function(result){
-		// 	console.log('successfully saved data');
-		// }).catch(function(error){
-		// 	console.log('error: ' + error.message);
-		// });
-
 	}
 });
 
@@ -27295,6 +27262,22 @@ var dashboard = React.createClass({displayName: "dashboard",
 			that.props.onChange(details);
 		});
 	},
+	addSampleData: function(){
+		var today = new Date();
+		var message = {
+			date: today.toDateString(),
+			untranslated: 'hello world',
+			direction: 'en-es',
+			translated: 'hola mundo'
+		}
+
+		var newPostKey = firebase.database().ref().child('user-messages/' + this.props.currentUser.uid).push().key;
+		console.log(newPostKey);
+
+		var updates = {};
+		updates['user-messages/' + this.props.currentUser.uid + '/' + newPostKey] = message;
+		firebase.database().ref().update(updates);
+	},
 	render: function(){
 		var activityView;
 		if (this.props.currentUser){
@@ -27316,7 +27299,8 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 				React.createElement("div", {className: "activity-feed"}, 
 					React.createElement("h3", null, "Recent Translations"), 
-					activityView	
+					activityView, 	
+					React.createElement("button", {className: "btn btn-danger", onClick: this.addSampleData}, "Add Sample Data")
 				)
 			)
 		);
@@ -27588,7 +27572,7 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 	},
 	componentWillMount: function(){
 		var that = this;
-		firebase.database().ref('/user-messages/' + this.props.user.uid).once('value')
+		// firebase.database().ref('/user-messages/' + this.props.user.uid).once('value')
 		// .then(function(snapshot) { //get intial details
 		// 	var userMessages = snapshot.val();
 		// 	console.log('retrieved messages: ' + userMessages);
@@ -27598,6 +27582,8 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 		// 	}
 		// 	that.setState({messages: messageList});
 		// });
+
+		//will fire once per child in ref, then again for each child added. 
 		firebase.database().ref('/user-messages/' + this.props.user.uid).on('child_added', function(data) {
 			console.log('heard added: ' + data.val().untranslated);
 			var messages = that.state.messages;

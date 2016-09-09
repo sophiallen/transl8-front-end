@@ -50,6 +50,22 @@ var dashboard = React.createClass({
 			that.props.onChange(details);
 		});
 	},
+	addSampleData: function(){
+		var today = new Date();
+		var message = {
+			date: today.toDateString(),
+			untranslated: 'hello world',
+			direction: 'en-es',
+			translated: 'hola mundo'
+		}
+
+		var newPostKey = firebase.database().ref().child('user-messages/' + this.props.currentUser.uid).push().key;
+		console.log(newPostKey);
+
+		var updates = {};
+		updates['user-messages/' + this.props.currentUser.uid + '/' + newPostKey] = message;
+		firebase.database().ref().update(updates);
+	},
 	render: function(){
 		var activityView;
 		if (this.props.currentUser){
@@ -72,6 +88,7 @@ var dashboard = React.createClass({
 				<div className="activity-feed">
 					<h3>Recent Translations</h3>
 					{activityView}	
+					<button className="btn btn-danger" onClick={this.addSampleData}>Add Sample Data</button>
 				</div>
 			</div>
 		);
