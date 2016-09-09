@@ -27669,7 +27669,7 @@ var EditableSelect = React.createClass({displayName: "EditableSelect",
 			return item.langCode === code;
 		});
 
-		return (React.createElement("h4", null, 
+		return (React.createElement("h5", null, 
 					React.createElement("strong", null, this.props.title, ": "), " ", displayLang? displayLang.langName : 'loading...', 
 					React.createElement("button", {className: "btn btn-small btn-default", onClick: this.edit}, "Edit")
 				))
@@ -27727,7 +27727,7 @@ var EditableText = React.createClass({displayName: "EditableText",
 			))
 	},
 	renderDisplay: function(){
-		return (React.createElement("h4", null, React.createElement("strong", null, this.props.title, ": "), this.props.placeHolder, 
+		return (React.createElement("h5", null, React.createElement("strong", null, this.props.title, ": "), this.props.placeHolder, 
 					React.createElement("button", {type: "submit", className: "btn btn-small btn-default", onClick: this.edit}, "Edit")
 				));
 	},

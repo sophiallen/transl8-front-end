@@ -21,9 +21,9 @@ var EditableText = React.createClass({
 			</form>)
 	},
 	renderDisplay: function(){
-		return (<h4><strong>{this.props.title}: </strong>{this.props.placeHolder} 
+		return (<h5><strong>{this.props.title}: </strong>{this.props.placeHolder} 
 					<button type="submit" className="btn btn-small btn-default" onClick={this.edit}>Edit</button>
-				</h4>);
+				</h5>);
 	},
 	save: function(e){
 		e.preventDefault();

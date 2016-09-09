@@ -31,11 +31,11 @@ div.dashboard label {
 	font-size: 18px;
 }
 
-div.dashboard h4 {
+div.dashboard h5 {
 	margin-bottom: 20px;
 }
 
-div.dashboard h4 button.btn.btn-small.btn-default{
+div.dashboard h5 button.btn.btn-small.btn-default{
 	float: right;
 }
 
@@ -49,4 +49,8 @@ div.dashboard table.table-hover tbody tr:hover {
 
 div.dashboard table.table-hover tbody tr.th:hover {
 	background-color: transparent;
+}
+
+div.settings {
+	margin-bottom: 4em;
 }

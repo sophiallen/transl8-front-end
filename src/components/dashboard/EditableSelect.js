@@ -24,10 +24,10 @@ var EditableSelect = React.createClass({
 			return item.langCode === code;
 		});
 
-		return (<h4>
+		return (<h5>
 					<strong>{this.props.title}: </strong> {displayLang? displayLang.langName : 'loading...'}
 					<button className="btn btn-small btn-default" onClick={this.edit}>Edit</button>
-				</h4>)
+				</h5>)
 	},
 	createSelectItem: function(item, index){
 		return <option key={index} value={item.langCode}>{item.langName}</option>
