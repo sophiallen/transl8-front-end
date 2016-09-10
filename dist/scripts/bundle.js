@@ -27216,6 +27216,7 @@ var EditableText = require('./dashboard/EditableText.js');
 var EditableDropDown = require('./dashboard/EditableSelect.js');
 var ActivityGrid = require('./dashboard/ActivityGrid.js');
 var Flashcard = require('./dashboard/Flashcard.js');
+var FlashcardDeck = require('./dashboard/FlashcardDeck.js');
 var langData = require('./../data/languages.js');
 
 var dashboard = React.createClass({displayName: "dashboard",
@@ -27281,10 +27282,13 @@ var dashboard = React.createClass({displayName: "dashboard",
 	},
 	render: function(){
 		var activityView;
+		var cardDeck;
 		if (this.props.currentUser){
 			activityView = React.createElement(ActivityGrid, {user: this.props.currentUser})
+			cardDeck = React.createElement(FlashcardDeck, {user: this.props.currentUser})
 		} else {
 			activityView = React.createElement("p", null, "Loading data...")
+			cardDeck = React.createElement("p", null, "Loading data...")
 		}
 		return (
 			React.createElement("div", {className: "dashboard"}, 
@@ -27304,7 +27308,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 					React.createElement("button", {className: "btn btn-danger", onClick: this.addSampleData}, "Add Sample Data")
 				), 
 				React.createElement("div", {className: "flashCards"}, 
-					React.createElement(Flashcard, null)
+					cardDeck
 				)
 			)
 		);
@@ -27313,7 +27317,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 module.exports = dashboard;
 
-},{"./../data/languages.js":255,"./dashboard/ActivityGrid.js":249,"./dashboard/EditableSelect.js":251,"./dashboard/EditableText.js":252,"./dashboard/Flashcard.js":253,"firebase":3,"react":237}],242:[function(require,module,exports){
+},{"./../data/languages.js":256,"./dashboard/ActivityGrid.js":249,"./dashboard/EditableSelect.js":251,"./dashboard/EditableText.js":252,"./dashboard/Flashcard.js":253,"./dashboard/FlashcardDeck.js":254,"firebase":3,"react":237}],242:[function(require,module,exports){
 var React = require('react');
 var Link = require('react-router').Link;
 
@@ -27576,16 +27580,6 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 	},
 	componentWillMount: function(){
 		var that = this;
-		// firebase.database().ref('/user-messages/' + this.props.user.uid).once('value')
-		// .then(function(snapshot) { //get intial details
-		// 	var userMessages = snapshot.val();
-		// 	console.log('retrieved messages: ' + userMessages);
-		// 	var messageList = [];
-		// 	for (var message in userMessages){
-		// 		messageList.push(userMessages[message]);
-		// 	}
-		// 	that.setState({messages: messageList});
-		// });
 
 		//will fire once per child in ref, then again for each child added. 
 		firebase.database().ref('/user-messages/' + this.props.user.uid).on('child_added', function(data) {
@@ -27775,14 +27769,10 @@ var Flashcard = React.createClass({displayName: "Flashcard",
 			React.createElement("div", {className: flipClass, onClick: this.flip}, 
 				React.createElement("div", {className: "flipper"}, 
 						React.createElement("div", {className: "front"}, 
-							React.createElement("p", null, "Front Content"), 
-							React.createElement("p", null, "Front Content"), 
-							React.createElement("p", null, "Front Content")
+							React.createElement("h4", null, this.props.front)
 						), 
 						React.createElement("div", {className: "back"}, 
-							React.createElement("p", null, "Back Content"), 			
-							React.createElement("p", null, "Back Content"), 			
-							React.createElement("p", null, "Back Content")			
+							React.createElement("h4", null, this.props.back)		
 						)
 				)
 			)
@@ -27793,6 +27783,46 @@ var Flashcard = React.createClass({displayName: "Flashcard",
 module.exports = Flashcard;
 
 },{"react":237}],254:[function(require,module,exports){
+var React = require('react');
+var Flashcard = require('./Flashcard.js');
+
+var FlashcardDeck = React.createClass({displayName: "FlashcardDeck",
+	getInitialState: function(){
+		return {
+			cards: [],
+			currentCard: 0
+		}
+	},
+	componentWillMount: function(){
+		var that = this;
+		firebase.database().ref('/user-messages/' + this.props.user.uid).on('child_added', function(data) {
+			var cards = that.state.cards;
+			cards.push(data.val());
+			that.setState({cards: cards});
+		});
+	},
+	eachCard: function(item, index){
+		var cardClass = (index === this.state.currentCard)? "current-card" : 'background-card';
+		return (React.createElement(Flashcard, {key: index, front: item.translated, back: item.untranslated, className: cardClass}));
+	},
+	nextCard: function(){
+		var nextCardIndex = (this.state.currentCard + 1)%this.state.cards.length;
+		this.setState({currentCard: nextCardIndex});
+	},
+	render: function(){
+		var cards =	this.state.cards.map(this.eachCard);
+
+		return (
+			React.createElement("div", {className: "card-deck"}, 
+				cards[this.state.currentCard], 
+				React.createElement("button", {onClick: this.nextCard, className: "btn btn-success"}, "Next Card")
+			))
+	}
+});
+
+module.exports = FlashcardDeck;
+
+},{"./Flashcard.js":253,"react":237}],255:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var Link = require('react-router').Link;
@@ -27867,7 +27897,7 @@ var UserDataForm = React.createClass({displayName: "UserDataForm",
 });
 
 module.exports = UserDataForm;
-},{"./../../data/languages.js":255,"firebase":3,"react":237,"react-router":35}],255:[function(require,module,exports){
+},{"./../../data/languages.js":256,"firebase":3,"react":237,"react-router":35}],256:[function(require,module,exports){
 var languages = [
 	{langName: 'Azerbaijan', langCode: 'az'},
 	{langName: 'Albanian', langCode: 'sq'},
@@ -27958,7 +27988,7 @@ var languages = [
 
 module.exports = languages;
 
-},{}],256:[function(require,module,exports){
+},{}],257:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -27966,7 +27996,7 @@ var routes = require('./router.js');
 
 ReactDOM.render(routes, document.getElementById('app'));
 
-},{"./router.js":257,"react":237,"react-dom":5}],257:[function(require,module,exports){
+},{"./router.js":258,"react":237,"react-dom":5}],258:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
@@ -28010,7 +28040,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/About.js":239,"./components/App.js":240,"./components/Dashboard.js":241,"./components/Home.js":242,"./components/LogOut.js":243,"./components/Login.js":244,"./components/NotFound.js":246,"./components/ParamSample.js":247,"./components/Register.js":248,"./components/dashboard/UserDataForm.js":254,"./utils/authenticate.js":258,"react":237,"react-dom":5,"react-router":35}],258:[function(require,module,exports){
+},{"./components/About.js":239,"./components/App.js":240,"./components/Dashboard.js":241,"./components/Home.js":242,"./components/LogOut.js":243,"./components/Login.js":244,"./components/NotFound.js":246,"./components/ParamSample.js":247,"./components/Register.js":248,"./components/dashboard/UserDataForm.js":255,"./utils/authenticate.js":259,"react":237,"react-dom":5,"react-router":35}],259:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var config = require('./../../firebase.config.js');
@@ -28034,4 +28064,4 @@ function requireAuth(nextState, replace){
 
 module.exports = requireAuth;
 
-},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[256]);
+},{"./../../firebase.config.js":1,"firebase":3,"react":237}]},{},[257]);

@@ -9,16 +9,6 @@ var ActivityGrid = React.createClass({
 	},
 	componentWillMount: function(){
 		var that = this;
-		// firebase.database().ref('/user-messages/' + this.props.user.uid).once('value')
-		// .then(function(snapshot) { //get intial details
-		// 	var userMessages = snapshot.val();
-		// 	console.log('retrieved messages: ' + userMessages);
-		// 	var messageList = [];
-		// 	for (var message in userMessages){
-		// 		messageList.push(userMessages[message]);
-		// 	}
-		// 	that.setState({messages: messageList});
-		// });
 
 		//will fire once per child in ref, then again for each child added. 
 		firebase.database().ref('/user-messages/' + this.props.user.uid).on('child_added', function(data) {

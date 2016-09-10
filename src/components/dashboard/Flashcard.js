@@ -14,14 +14,10 @@ var Flashcard = React.createClass({
 			<div className={flipClass} onClick={this.flip}>
 				<div className="flipper">
 						<div className="front">
-							<p>Front Content</p>
-							<p>Front Content</p>
-							<p>Front Content</p>
+							<h4>{this.props.front}</h4>
 						</div>
 						<div className="back">
-							<p>Back Content</p>			
-							<p>Back Content</p>			
-							<p>Back Content</p>			
+							<h4>{this.props.back}</h4>		
 						</div>
 				</div>
 			</div>
