@@ -24,13 +24,22 @@ var FlashcardDeck = React.createClass({
 		var nextCardIndex = (this.state.currentCard + 1)%this.state.cards.length;
 		this.setState({currentCard: nextCardIndex});
 	},
+	prevCard: function(){
+		var prevCardIndex = this.state.currentCard -1;
+		if (prevCardIndex == -1) prevCardIndex = this.state.cards.length-1;
+		this.setState({currentCard: prevCardIndex});
+		console.log(prevCardIndex);
+	},
 	render: function(){
 		var cards =	this.state.cards.map(this.eachCard);
 
 		return (
 			<div className="card-deck">
 				{cards[this.state.currentCard]}
-				<button onClick={this.nextCard} className="btn btn-success">Next Card</button>
+				<div className="deckNavBtns">
+					<button onClick={this.nextCard} className="btn btn-success">Next Card</button>
+					<button onClick={this.prevCard} className="btn btn-danger">Previous Card</button>
+				</div>
 			</div>)
 	}
 });

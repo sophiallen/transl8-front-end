@@ -27809,13 +27809,22 @@ var FlashcardDeck = React.createClass({displayName: "FlashcardDeck",
 		var nextCardIndex = (this.state.currentCard + 1)%this.state.cards.length;
 		this.setState({currentCard: nextCardIndex});
 	},
+	prevCard: function(){
+		var prevCardIndex = this.state.currentCard -1;
+		if (prevCardIndex == -1) prevCardIndex = this.state.cards.length-1;
+		this.setState({currentCard: prevCardIndex});
+		console.log(prevCardIndex);
+	},
 	render: function(){
 		var cards =	this.state.cards.map(this.eachCard);
 
 		return (
 			React.createElement("div", {className: "card-deck"}, 
 				cards[this.state.currentCard], 
-				React.createElement("button", {onClick: this.nextCard, className: "btn btn-success"}, "Next Card")
+				React.createElement("div", {className: "deckNavBtns"}, 
+					React.createElement("button", {onClick: this.nextCard, className: "btn btn-success"}, "Next Card"), 
+					React.createElement("button", {onClick: this.prevCard, className: "btn btn-danger"}, "Previous Card")
+				)
 			))
 	}
 });
