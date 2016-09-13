@@ -27595,6 +27595,18 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 			React.createElement(ActivityItem, {key: index, date: item.date, direction: item.direction, text: item.untranslated, translation: item.translated})
 			)
 	},
+	createCardSet: function(){
+		var newSetKey = firebase.database().ref().child('user-cards/' + this.props.currentUser.uid).push().key;
+
+		firebase.database().ref('user-cards/' + this.props.currentUser.uid + '/' + newSetKey).set({
+			setName: 'Test Set',
+			cards: this.context.userMessages
+		}).then(function(){
+			console.log('successfully saved set');
+		}).catch(function(){
+			console.log('error occurred in saving set');
+		});
+	},
 	render: function(){
 		var messages = React.createElement("tr", null, React.createElement("td", null, "'loading...'"))
 		if (this.state.messages){
@@ -27788,18 +27800,21 @@ var Flashcard = require('./Flashcard.js');
 
 var FlashcardDeck = React.createClass({displayName: "FlashcardDeck",
 	getInitialState: function(){
+		var cards = [];
+
+		//convert incoming json into array of cards
+		for (var item in this.props.cards){
+			cards.push(this.props.cards[item]);
+		}
+
 		return {
-			cards: [],
+			cards: cards,
+			title: this.props.title,
 			currentCard: 0
 		}
 	},
 	componentWillMount: function(){
-		var that = this;
-		firebase.database().ref('/user-messages/' + this.props.user.uid).on('child_added', function(data) {
-			var cards = that.state.cards;
-			cards.push(data.val());
-			that.setState({cards: cards});
-		});
+
 	},
 	eachCard: function(item, index){
 		var cardClass = (index === this.state.currentCard)? "current-card" : 'background-card';
@@ -27817,13 +27832,13 @@ var FlashcardDeck = React.createClass({displayName: "FlashcardDeck",
 	},
 	render: function(){
 		var cards =	this.state.cards.map(this.eachCard);
-
+		//todo: dropdown to select card set
 		return (
 			React.createElement("div", {className: "card-deck"}, 
 				cards[this.state.currentCard], 
 				React.createElement("div", {className: "deckNavBtns"}, 
-					React.createElement("button", {onClick: this.nextCard, className: "btn btn-success"}, "Next Card"), 
-					React.createElement("button", {onClick: this.prevCard, className: "btn btn-danger"}, "Previous Card")
+					React.createElement("button", {onClick: this.prevCard, className: "btn btn-danger"}, "Previous Card"), 
+					React.createElement("button", {onClick: this.nextCard, className: "btn btn-success"}, "Next Card")
 				)
 			))
 	}

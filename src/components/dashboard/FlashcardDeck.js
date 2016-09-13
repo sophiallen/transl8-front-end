@@ -3,18 +3,21 @@ var Flashcard = require('./Flashcard.js');
 
 var FlashcardDeck = React.createClass({
 	getInitialState: function(){
+		var cards = [];
+
+		//convert incoming json into array of cards
+		for (var item in this.props.cards){
+			cards.push(this.props.cards[item]);
+		}
+
 		return {
-			cards: [],
+			cards: cards,
+			title: this.props.title,
 			currentCard: 0
 		}
 	},
 	componentWillMount: function(){
-		var that = this;
-		firebase.database().ref('/user-messages/' + this.props.user.uid).on('child_added', function(data) {
-			var cards = that.state.cards;
-			cards.push(data.val());
-			that.setState({cards: cards});
-		});
+
 	},
 	eachCard: function(item, index){
 		var cardClass = (index === this.state.currentCard)? "current-card" : 'background-card';
@@ -32,13 +35,13 @@ var FlashcardDeck = React.createClass({
 	},
 	render: function(){
 		var cards =	this.state.cards.map(this.eachCard);
-
+		//todo: dropdown to select card set
 		return (
 			<div className="card-deck">
 				{cards[this.state.currentCard]}
 				<div className="deckNavBtns">
-					<button onClick={this.nextCard} className="btn btn-success">Next Card</button>
 					<button onClick={this.prevCard} className="btn btn-danger">Previous Card</button>
+					<button onClick={this.nextCard} className="btn btn-success">Next Card</button>
 				</div>
 			</div>)
 	}

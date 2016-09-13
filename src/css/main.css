@@ -103,3 +103,10 @@ div.settings {
 .back {
 	transform: rotateY(180deg);
 }
+
+div.deckNavBtns {
+	text-align: center;
+}
+div.deckNavBtns button{
+	margin: .5em;
+}

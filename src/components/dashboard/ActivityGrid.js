@@ -24,13 +24,28 @@ var ActivityGrid = React.createClass({
 			<ActivityItem key={index} date={item.date} direction={item.direction} text={item.untranslated} translation={item.translated}/>
 			)
 	},
+	createCardSet: function(){
+		var newSetKey = firebase.database().ref().child('user-cards/' + this.props.currentUser.uid).push().key;
+
+		firebase.database().ref('user-cards/' + this.props.currentUser.uid + '/' + newSetKey).set({
+			setName: 'Test Set',
+			cards: this.context.userMessages
+		}).then(function(){
+			console.log('successfully saved set');
+		}).catch(function(){
+			console.log('error occurred in saving set');
+		});
+	},
+	createCardSet: function(){
+		
+	},
 	render: function(){
 		var messages = <tr><td>'loading...'</td></tr>
 		if (this.state.messages){
 			messages = this.state.messages.map(this.eachItem);
 		}
 
-		return (
+		return (<div>
 				<table className="table table-hover">
 					<tbody>
 						<tr className="th">
@@ -43,6 +58,8 @@ var ActivityGrid = React.createClass({
 						{messages}
 					</tbody>
 				</table>
+				<button onClick={this.createCardSet} className="btn btn-success">Create FlashCards</button>
+				<div>
 			);
 	}
 });
