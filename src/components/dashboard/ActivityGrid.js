@@ -5,7 +5,8 @@ var ReactFireMixin = require('reactfire');
 
 var ActivityGrid = React.createClass({
 	getInitialState: function(){
-		return {messages: []}
+		return {messages: [],
+			selected: []}
 	},
 	componentWillMount: function(){
 		var that = this;
@@ -21,8 +22,8 @@ var ActivityGrid = React.createClass({
 	},
 	eachItem: function(item, index){
 		return(
-			<ActivityItem key={index} date={item.date} direction={item.direction} text={item.untranslated} translation={item.translated}/>
-			)
+			<ActivityItem update={this.handleSelect} itemIndex={index} key={index} date={item.date} direction={item.direction} text={item.untranslated} translation={item.translated}/>
+		)
 	},
 	createCardSet: function(){
 		var newSetKey = firebase.database().ref().child('user-cards/' + this.props.currentUser.uid).push().key;
@@ -35,6 +36,16 @@ var ActivityGrid = React.createClass({
 		}).catch(function(){
 			console.log('error occurred in saving set');
 		});
+	},
+	handleSelect: function(checked, index){ //saves indices of selected items to array.
+		var selected = this.state.selected;
+		if (checked){
+			selected.push(index);
+		} else {
+			var toRemove = selected.indexOf(index);
+			selected.splice(toRemove,1);
+		}
+		this.setState({selected: selected});
 	},
 	render: function(){
 		var messages = (<tr><td>'loading...'</td></tr>);

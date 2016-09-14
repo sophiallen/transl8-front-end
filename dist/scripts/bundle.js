@@ -27581,7 +27581,8 @@ var ReactFireMixin = require('reactfire');
 
 var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 	getInitialState: function(){
-		return {messages: []}
+		return {messages: [],
+			selected: []}
 	},
 	componentWillMount: function(){
 		var that = this;
@@ -27597,8 +27598,8 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 	},
 	eachItem: function(item, index){
 		return(
-			React.createElement(ActivityItem, {key: index, date: item.date, direction: item.direction, text: item.untranslated, translation: item.translated})
-			)
+			React.createElement(ActivityItem, {update: this.handleSelect, itemIndex: index, key: index, date: item.date, direction: item.direction, text: item.untranslated, translation: item.translated})
+		)
 	},
 	createCardSet: function(){
 		var newSetKey = firebase.database().ref().child('user-cards/' + this.props.currentUser.uid).push().key;
@@ -27611,6 +27612,16 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 		}).catch(function(){
 			console.log('error occurred in saving set');
 		});
+	},
+	handleSelect: function(checked, index){ //saves indices of selected items to array.
+		var selected = this.state.selected;
+		if (checked){
+			selected.push(index);
+		} else {
+			var toRemove = selected.indexOf(index);
+			selected.splice(toRemove,1);
+		}
+		this.setState({selected: selected});
 	},
 	render: function(){
 		var messages = (React.createElement("tr", null, React.createElement("td", null, "'loading...'")));
@@ -27639,11 +27650,19 @@ module.exports = ActivityGrid;
 var React = require('react');
 
 var ActivityItem = React.createClass({displayName: "ActivityItem",
+	getInitialState: function(){
+		return {isChecked: false}
+	},
+	handleCheck: function(e){
+		console.log('event state: ' + e.target.checked);
+		this.props.update(e.target.checked, this.props.itemIndex);
+	},	
 	render: function(){
+		//{this.props.date}
 		return (
 			React.createElement("tr", null, 
 				React.createElement("td", null, 
-					React.createElement("input", {type: "checkbox", ref: "checkbox"})
+					React.createElement("input", {onClick: this.handleCheck, type: "checkbox", ref: "checkbox"})
 				), 
 				React.createElement("td", null, this.props.date), 
 				React.createElement("td", null, this.props.direction), 
