@@ -95,9 +95,9 @@ var dashboard = React.createClass({
 				<div className="activity-feed">
 					<h3>Recent Translations</h3>
 					{activityView}	
-					<button className="btn btn-danger" onClick={this.addSampleData}>Add Sample Data</button>
 				</div>
 				{cardViewer}
+				<button className="btn btn-default" onClick={this.addSampleData}>Add Sample Data</button>
 			</div>
 		);
 	}

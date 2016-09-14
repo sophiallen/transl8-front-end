@@ -15,18 +15,19 @@ var HomePage = React.createClass({
 	},
 	componentWillMount: function(){
 		var that = this;
+
 		firebase.auth().onAuthStateChanged(firebaseUser => {
 			that.setState({
 				loggedIn: (null !== firebaseUser)
 			});
 
 			if (firebaseUser){
-				var userDetails = this.getUserDetails(firebaseUser.uid);
+				that.getUserDetails(firebaseUser.uid);
 				that.getUserMessages(firebaseUser.uid);
-				that.setState({currentUser: firebaseUser, userDetails: userDetails});
+				that.setState({currentUser: firebaseUser});
 			} else {
 				console.log('No one logged in');
-				that.setState({currentUser: 'no one logged in', userDetails: null});
+				that.setState({currentUser: null, userDetails: null});
 			}
 		});
 	},
@@ -36,7 +37,6 @@ var HomePage = React.createClass({
 		userRef.once('value').then(function(snapshot) { //get intial details
 			var userDetails = snapshot.val();
 			that.setState({userDetails: userDetails});
-			return userDetails;
 		});
 	},
 	getUserMessages: function(userId){

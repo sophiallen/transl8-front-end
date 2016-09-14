@@ -27149,18 +27149,19 @@ var HomePage = React.createClass({displayName: "HomePage",
 	},
 	componentWillMount: function(){
 		var that = this;
+
 		firebase.auth().onAuthStateChanged(firebaseUser => {
 			that.setState({
 				loggedIn: (null !== firebaseUser)
 			});
 
 			if (firebaseUser){
-				var userDetails = this.getUserDetails(firebaseUser.uid);
+				that.getUserDetails(firebaseUser.uid);
 				that.getUserMessages(firebaseUser.uid);
-				that.setState({currentUser: firebaseUser, userDetails: userDetails});
+				that.setState({currentUser: firebaseUser});
 			} else {
 				console.log('No one logged in');
-				that.setState({currentUser: 'no one logged in', userDetails: null});
+				that.setState({currentUser: null, userDetails: null});
 			}
 		});
 	},
@@ -27170,7 +27171,6 @@ var HomePage = React.createClass({displayName: "HomePage",
 		userRef.once('value').then(function(snapshot) { //get intial details
 			var userDetails = snapshot.val();
 			that.setState({userDetails: userDetails});
-			return userDetails;
 		});
 	},
 	getUserMessages: function(userId){
@@ -27306,10 +27306,10 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 				React.createElement("div", {className: "activity-feed"}, 
 					React.createElement("h3", null, "Recent Translations"), 
-					activityView, 	
-					React.createElement("button", {className: "btn btn-danger", onClick: this.addSampleData}, "Add Sample Data")
+					activityView	
 				), 
-				cardViewer
+				cardViewer, 
+				React.createElement("button", {className: "btn btn-default", onClick: this.addSampleData}, "Add Sample Data")
 			)
 		);
 	}
@@ -27843,7 +27843,8 @@ var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
 		var decks = this.state.decks;
 		firebase.database().ref('/user-cardsets/' + this.props.user.uid).on('child_added', function(data) {
 			decks.push(data.val());
-			that.setState({decks: decks});
+			that.setState({decks: decks,
+				currentDeck: decks[0]});
 		});
 	},
 	createDeckItem: function(item, index){
@@ -27860,17 +27861,19 @@ var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
 
 		var currentDeck = this.state.currentDeck? React.createElement(FlashcardDeck, {title: this.state.currentDeck.name, cards: this.state.currentDeck.cards}) : React.createElement("p", null, "Select a deck above to view cards");
 		
-		return (React.createElement("div", null, 
-				React.createElement("form", {className: "form-inline"}, 
-					React.createElement("div", {className: "form-group"}, 
-						React.createElement("label", null, "Select Flash Card Deck:   "), 
-						React.createElement("select", {onChange: this.selectDeck, ref: "selectDeckDropDown", className: "form-control", defaultValue: "none selected"}, 
-							React.createElement("option", {value: "none"}, "None "), 
-							this.state.decks.map(this.createDeckItem)
+		return (React.createElement("div", {className: "FlashCardViewer"}, 
+					React.createElement("h3", null, "Your Flashcards"), 
+
+					React.createElement("form", {className: "form-inline"}, 
+						React.createElement("div", {className: "form-group"}, 
+							React.createElement("label", null, "Select Flash Card Deck:   "), 
+							React.createElement("select", {onChange: this.selectDeck, ref: "selectDeckDropDown", className: "form-control", defaultValue: "none selected"}, 
+								React.createElement("option", {value: "none"}, "None "), 
+								this.state.decks.map(this.createDeckItem)
+							)
 						)
-					)
-				), 
-				currentDeck
+					), 
+					currentDeck
 			))
 	}
 });
@@ -27935,7 +27938,7 @@ var FlashcardDeck = React.createClass({displayName: "FlashcardDeck",
 		var cards =	this.props.cards.map(this.eachCard);
 		return (
 			React.createElement("div", {className: "card-deck"}, 
-				React.createElement("h4", null, this.props.title), 
+				React.createElement("h3", null, this.props.title), 
 				cards[this.state.currentCard], 
 				React.createElement("div", {className: "deckNavBtns"}, 
 					React.createElement("button", {onClick: this.prevCard, className: "btn btn-danger"}, "Previous Card"), 

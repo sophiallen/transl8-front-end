@@ -25,7 +25,7 @@ var FlashcardDeck = React.createClass({
 		var cards =	this.props.cards.map(this.eachCard);
 		return (
 			<div className="card-deck">
-				<h4>{this.props.title}</h4>
+				<h3>{this.props.title}</h3>
 				{cards[this.state.currentCard]}
 				<div className="deckNavBtns">
 					<button onClick={this.prevCard} className="btn btn-danger">Previous Card</button>
