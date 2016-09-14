@@ -13,7 +13,6 @@ var ActivityGrid = React.createClass({
 
 		//will fire once per child in ref, then again for each child added. 
 		firebase.database().ref('/user-messages/' + this.props.user.uid).on('child_added', function(data) {
-			console.log('heard added: ' + data.val().untranslated);
 			var messages = that.state.messages;
 			messages.push(data.val());
 			that.setState({messages: messages});
@@ -47,11 +46,53 @@ var ActivityGrid = React.createClass({
 		}
 		this.setState({selected: selected});
 	},
+	createDeck: function(e){
+		e.preventDefault();
+		this.setState({showForm: false});
+
+		var messages = this.state.messages;
+		var cards = this.state.selected.map(function(indexNum){
+				return messages[indexNum];
+		});			
+
+		var newDeck = {
+			name: this.refs.newText.value,
+			cards: cards
+		}
+		var userId = this.props.user.uid;
+		var newSetKey = firebase.database().ref().child('user-cards/' + userId).push().key;
+		
+		firebase.database().ref('user-cardsets/' + userId+ '/' + newSetKey).set(newDeck)
+		.then(function(){
+			console.log('successfully saved flashcard set to db');
+		}).catch(function(){
+			console.log('error occurred in saving set');
+		});
+		console.log(newDeck);
+	},
+	showForm: function(){
+		this.setState({showForm: true});
+	},
+	cancel: function(){
+		this.setState({showForm: false});
+	},
+	renderForm: function(){
+		return (
+			<form className="form-inline">
+				<div className="form-group"><label><strong>Name of Flashcard Deck: </strong></label>
+					<input type="text" ref="newText" className="form-control"/>
+					<button onClick={this.createDeck} type="submit" className="btn btn-success btn-small">Save</button>
+					<button onClick={this.cancel} className="btn btn-warning btn-small pull-right">Cancel</button>
+				</div>
+			</form>)
+	},
 	render: function(){
 		var messages = (<tr><td>'loading...'</td></tr>);
 		if (this.state.messages){
 			messages = this.state.messages.map(this.eachItem);
-		}		
+		}
+		var form = this.state.showForm? this.renderForm() : '';
+
 		return (<div>
 					<table className="table table-hover">
 						<tbody>
@@ -65,6 +106,10 @@ var ActivityGrid = React.createClass({
 							{messages}
 						</tbody>
 					</table>
+					<button onClick={this.showForm}
+					 disabled={this.state.selected.length > 0? '' : 'disabled'} 
+					 className="btn btn-danger">Create Deck from Selected</button>
+					{form}
 		</div>)
 	}
 });

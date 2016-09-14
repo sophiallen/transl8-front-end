@@ -27589,7 +27589,6 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 
 		//will fire once per child in ref, then again for each child added. 
 		firebase.database().ref('/user-messages/' + this.props.user.uid).on('child_added', function(data) {
-			console.log('heard added: ' + data.val().untranslated);
 			var messages = that.state.messages;
 			messages.push(data.val());
 			that.setState({messages: messages});
@@ -27623,11 +27622,53 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 		}
 		this.setState({selected: selected});
 	},
+	createDeck: function(e){
+		e.preventDefault();
+		this.setState({showForm: false});
+
+		var messages = this.state.messages;
+		var cards = this.state.selected.map(function(indexNum){
+				return messages[indexNum];
+		});			
+
+		var newDeck = {
+			name: this.refs.newText.value,
+			cards: cards
+		}
+		var userId = this.props.user.uid;
+		var newSetKey = firebase.database().ref().child('user-cards/' + userId).push().key;
+		
+		firebase.database().ref('user-cardsets/' + userId+ '/' + newSetKey).set(newDeck)
+		.then(function(){
+			console.log('successfully saved flashcard set to db');
+		}).catch(function(){
+			console.log('error occurred in saving set');
+		});
+		console.log(newDeck);
+	},
+	showForm: function(){
+		this.setState({showForm: true});
+	},
+	cancel: function(){
+		this.setState({showForm: false});
+	},
+	renderForm: function(){
+		return (
+			React.createElement("form", {className: "form-inline"}, 
+				React.createElement("div", {className: "form-group"}, React.createElement("label", null, React.createElement("strong", null, "Name of Flashcard Deck: ")), 
+					React.createElement("input", {type: "text", ref: "newText", className: "form-control"}), 
+					React.createElement("button", {onClick: this.createDeck, type: "submit", className: "btn btn-success btn-small"}, "Save"), 
+					React.createElement("button", {onClick: this.cancel, className: "btn btn-warning btn-small pull-right"}, "Cancel")
+				)
+			))
+	},
 	render: function(){
 		var messages = (React.createElement("tr", null, React.createElement("td", null, "'loading...'")));
 		if (this.state.messages){
 			messages = this.state.messages.map(this.eachItem);
-		}		
+		}
+		var form = this.state.showForm? this.renderForm() : '';
+
 		return (React.createElement("div", null, 
 					React.createElement("table", {className: "table table-hover"}, 
 						React.createElement("tbody", null, 
@@ -27640,7 +27681,11 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 							), 
 							messages
 						)
-					)
+					), 
+					React.createElement("button", {onClick: this.showForm, 
+					 disabled: this.state.selected.length > 0? '' : 'disabled', 
+					 className: "btn btn-danger"}, "Create Deck from Selected"), 
+					form
 		))
 	}
 });
