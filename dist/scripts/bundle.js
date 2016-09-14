@@ -27784,13 +27784,13 @@ var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
 	componentWillMount: function(){ //get db 
 		var that = this;
 		var decks = this.state.decks;
-		firebase.database().ref('/user-decks/' + this.props.user.uid).on('child_added', function(data) {
+		firebase.database().ref('/user-cardsets/' + this.props.user.uid).on('child_added', function(data) {
 			decks.push(data.val());
-			that.setState({cards: cards});
+			that.setState({decks: decks});
 		});
 	},
 	createDeckItem: function(item, index){
-		returnReact.createElement("option", {key: index, value: item.langCode}, item.langName)
+		return React.createElement("option", {key: index, value: item.name}, item.name)
 	},
 	createSampleDeck: function(){
 		var uid = this.props.user.uid;
@@ -27810,7 +27810,7 @@ var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
 					translated: 'hola mundo'
 				},
 				{
-					untranslated: 'fourth hellp',
+					untranslated: 'fourth hello',
 					direction: 'en-es',
 					translated: 'hola mundo'
 				}];
@@ -27820,10 +27820,11 @@ var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
 		};
 		var newPostKey = firebase.database().ref().child('user-cards/' + uid).push().key;
 		var updates = {};
-		updates['user-cards/' + uid + '/' + newPostKey] = newDeck;
+		updates['user-cardsets/' + uid + '/' + newPostKey] = newDeck;
 		firebase.database().ref().update(updates);
 	},
 	render: function(){
+
 		// {this.props.selectionData.map(this.createDeckItem)}
 
 		return (React.createElement("div", null, 
@@ -27831,7 +27832,8 @@ var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
 					React.createElement("div", {className: "form-group"}, 
 						React.createElement("label", null, "Select Flash Card Deck:   "), 
 						React.createElement("select", {ref: "newSelection", className: "form-control", defaultValue: "none selected"}, 
-							React.createElement("option", {value: "none"}, "None ")
+							React.createElement("option", {value: "none"}, "None "), 
+							this.state.decks.map(this.createDeckItem)
 						), 
 						React.createElement("button", {type: "submit", className: "btn btn-small btn-success", onClick: this.save}, "Save")
 					)

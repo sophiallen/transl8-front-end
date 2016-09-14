@@ -13,13 +13,13 @@ var FlashCardViewer = React.createClass({
 	componentWillMount: function(){ //get db 
 		var that = this;
 		var decks = this.state.decks;
-		firebase.database().ref('/user-decks/' + this.props.user.uid).on('child_added', function(data) {
+		firebase.database().ref('/user-cardsets/' + this.props.user.uid).on('child_added', function(data) {
 			decks.push(data.val());
-			that.setState({cards: cards});
+			that.setState({decks: decks});
 		});
 	},
 	createDeckItem: function(item, index){
-		return<option key={index} value={item.langCode}>{item.langName}</option>
+		return <option key={index} value={item.name}>{item.name}</option>
 	},
 	createSampleDeck: function(){
 		var uid = this.props.user.uid;
@@ -39,7 +39,7 @@ var FlashCardViewer = React.createClass({
 					translated: 'hola mundo'
 				},
 				{
-					untranslated: 'fourth hellp',
+					untranslated: 'fourth hello',
 					direction: 'en-es',
 					translated: 'hola mundo'
 				}];
@@ -49,10 +49,11 @@ var FlashCardViewer = React.createClass({
 		};
 		var newPostKey = firebase.database().ref().child('user-cards/' + uid).push().key;
 		var updates = {};
-		updates['user-cards/' + uid + '/' + newPostKey] = newDeck;
+		updates['user-cardsets/' + uid + '/' + newPostKey] = newDeck;
 		firebase.database().ref().update(updates);
 	},
 	render: function(){
+
 		// {this.props.selectionData.map(this.createDeckItem)}
 
 		return (<div>
@@ -61,6 +62,7 @@ var FlashCardViewer = React.createClass({
 						<label>Select Flash Card Deck:   </label>
 						<select ref="newSelection" className="form-control" defaultValue="none selected">
 							<option value="none">None </option>
+							{this.state.decks.map(this.createDeckItem)}
 						</select>
 						<button type="submit" className="btn btn-small btn-success" onClick={this.save}>Save</button>
 					</div>
