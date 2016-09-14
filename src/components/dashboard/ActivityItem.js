@@ -5,11 +5,9 @@ var ActivityItem = React.createClass({
 		return {isChecked: false}
 	},
 	handleCheck: function(e){
-		console.log('event state: ' + e.target.checked);
 		this.props.update(e.target.checked, this.props.itemIndex);
 	},	
 	render: function(){
-		//{this.props.date}
 		return (
 			<tr>
 				<td>

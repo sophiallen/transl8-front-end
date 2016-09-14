@@ -27287,11 +27287,9 @@ var dashboard = React.createClass({displayName: "dashboard",
 		var cardViewer;
 		if (this.props.currentUser){
 			activityView = React.createElement(ActivityGrid, {user: this.props.currentUser})
-			cardDeck = React.createElement(FlashcardDeck, {user: this.props.currentUser})
 			cardViewer = React.createElement(FlashCardViewer, {user: this.props.currentUser})
 		} else {
 			activityView = React.createElement("p", null, "Loading data...")
-			cardDeck = React.createElement("p", null, "Loading data...")
 			cardViewer = React.createElement("p", null, "Loading data...")
 		}
 		return (
@@ -27310,9 +27308,6 @@ var dashboard = React.createClass({displayName: "dashboard",
 					React.createElement("h3", null, "Recent Translations"), 
 					activityView, 	
 					React.createElement("button", {className: "btn btn-danger", onClick: this.addSampleData}, "Add Sample Data")
-				), 
-				React.createElement("div", {className: "flashCards"}, 
-					cardDeck
 				), 
 				cardViewer
 			)
@@ -27658,7 +27653,7 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 				React.createElement("div", {className: "form-group"}, React.createElement("label", null, React.createElement("strong", null, "Name of Flashcard Deck: ")), 
 					React.createElement("input", {type: "text", ref: "newText", className: "form-control"}), 
 					React.createElement("button", {onClick: this.createDeck, type: "submit", className: "btn btn-success btn-small"}, "Save"), 
-					React.createElement("button", {onClick: this.cancel, className: "btn btn-warning btn-small pull-right"}, "Cancel")
+					React.createElement("button", {onClick: this.cancel, className: "btn btn-warning btn-small"}, "Cancel")
 				)
 			))
 	},
@@ -27699,11 +27694,9 @@ var ActivityItem = React.createClass({displayName: "ActivityItem",
 		return {isChecked: false}
 	},
 	handleCheck: function(e){
-		console.log('event state: ' + e.target.checked);
 		this.props.update(e.target.checked, this.props.itemIndex);
 	},	
 	render: function(){
-		//{this.props.date}
 		return (
 			React.createElement("tr", null, 
 				React.createElement("td", null, 
@@ -27845,7 +27838,7 @@ var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
 			decks: []
 		}
 	},
-	componentWillMount: function(){ //get db 
+	componentWillMount: function(){ 
 		var that = this;
 		var decks = this.state.decks;
 		firebase.database().ref('/user-cardsets/' + this.props.user.uid).on('child_added', function(data) {
@@ -27856,53 +27849,28 @@ var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
 	createDeckItem: function(item, index){
 		return React.createElement("option", {key: index, value: item.name}, item.name)
 	},
-	createSampleDeck: function(){
-		var uid = this.props.user.uid;
-		var messages = [{
-					untranslated: 'hello world',
-					direction: 'en-es',
-					translated: 'hola mundo'
-				},
-				{
-					untranslated: 'hello again',
-					direction: 'en-es',
-					translated: 'hola mundo'
-				},
-				{
-					untranslated: 'third hello',
-					direction: 'en-es',
-					translated: 'hola mundo'
-				},
-				{
-					untranslated: 'fourth hello',
-					direction: 'en-es',
-					translated: 'hola mundo'
-				}];
-		var newDeck = {
-			name: 'Sample Deck',
-			cards: messages
-		};
-		var newPostKey = firebase.database().ref().child('user-cards/' + uid).push().key;
-		var updates = {};
-		updates['user-cardsets/' + uid + '/' + newPostKey] = newDeck;
-		firebase.database().ref().update(updates);
+	selectDeck: function(){
+		var selection = this.refs.selectDeckDropDown.value;
+		var newDeck = this.state.decks.find(function(item){
+			return item.name === selection;
+		});
+		this.setState({currentDeck: newDeck});
 	},
 	render: function(){
 
-		// {this.props.selectionData.map(this.createDeckItem)}
-
+		var currentDeck = this.state.currentDeck? React.createElement(FlashcardDeck, {title: this.state.currentDeck.name, cards: this.state.currentDeck.cards}) : React.createElement("p", null, "Select a deck above to view cards");
+		
 		return (React.createElement("div", null, 
 				React.createElement("form", {className: "form-inline"}, 
 					React.createElement("div", {className: "form-group"}, 
 						React.createElement("label", null, "Select Flash Card Deck:   "), 
-						React.createElement("select", {ref: "newSelection", className: "form-control", defaultValue: "none selected"}, 
+						React.createElement("select", {onChange: this.selectDeck, ref: "selectDeckDropDown", className: "form-control", defaultValue: "none selected"}, 
 							React.createElement("option", {value: "none"}, "None "), 
 							this.state.decks.map(this.createDeckItem)
-						), 
-						React.createElement("button", {type: "submit", className: "btn btn-small btn-success", onClick: this.save}, "Save")
+						)
 					)
 				), 
-				React.createElement("button", {onClick: this.createSampleDeck, className: "btn btn-default"}, "Create sample deck ")
+				currentDeck
 			))
 	}
 });
@@ -27945,41 +27913,29 @@ var Flashcard = require('./Flashcard.js');
 
 var FlashcardDeck = React.createClass({displayName: "FlashcardDeck",
 	getInitialState: function(){
-		var cards = [];
-
-		//convert incoming json into array of cards
-		for (var item in this.props.cards){
-			cards.push(this.props.cards[item]);
-		}
-
 		return {
-			cards: cards,
-			title: this.props.title,
 			currentCard: 0
 		}
-	},
-	componentWillMount: function(){
-
 	},
 	eachCard: function(item, index){
 		var cardClass = (index === this.state.currentCard)? "current-card" : 'background-card';
 		return (React.createElement(Flashcard, {key: index, front: item.translated, back: item.untranslated, className: cardClass}));
 	},
 	nextCard: function(){
-		var nextCardIndex = (this.state.currentCard + 1)%this.state.cards.length;
+		var nextCardIndex = (this.state.currentCard + 1)%this.props.cards.length;
 		this.setState({currentCard: nextCardIndex});
 	},
 	prevCard: function(){
 		var prevCardIndex = this.state.currentCard -1;
-		if (prevCardIndex == -1) prevCardIndex = this.state.cards.length-1;
+		if (prevCardIndex == -1) prevCardIndex = this.props.cards.length-1;
 		this.setState({currentCard: prevCardIndex});
 		console.log(prevCardIndex);
 	},
 	render: function(){
-		var cards =	this.state.cards.map(this.eachCard);
-		//todo: dropdown to select card set
+		var cards =	this.props.cards.map(this.eachCard);
 		return (
 			React.createElement("div", {className: "card-deck"}, 
+				React.createElement("h4", null, this.props.title), 
 				cards[this.state.currentCard], 
 				React.createElement("div", {className: "deckNavBtns"}, 
 					React.createElement("button", {onClick: this.prevCard, className: "btn btn-danger"}, "Previous Card"), 

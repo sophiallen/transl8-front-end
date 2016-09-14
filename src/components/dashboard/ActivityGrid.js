@@ -82,7 +82,7 @@ var ActivityGrid = React.createClass({
 				<div className="form-group"><label><strong>Name of Flashcard Deck: </strong></label>
 					<input type="text" ref="newText" className="form-control"/>
 					<button onClick={this.createDeck} type="submit" className="btn btn-success btn-small">Save</button>
-					<button onClick={this.cancel} className="btn btn-warning btn-small pull-right">Cancel</button>
+					<button onClick={this.cancel} className="btn btn-warning btn-small">Cancel</button>
 				</div>
 			</form>)
 	},
