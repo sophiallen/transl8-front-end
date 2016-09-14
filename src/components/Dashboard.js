@@ -5,6 +5,7 @@ var EditableDropDown = require('./dashboard/EditableSelect.js');
 var ActivityGrid = require('./dashboard/ActivityGrid.js');
 var Flashcard = require('./dashboard/Flashcard.js');
 var FlashcardDeck = require('./dashboard/FlashcardDeck.js');
+var FlashCardViewer = require('./dashboard/FlashCardViewer.js');
 var langData = require('./../data/languages.js');
 
 var dashboard = React.createClass({
@@ -71,12 +72,15 @@ var dashboard = React.createClass({
 	render: function(){
 		var activityView;
 		var cardDeck;
+		var cardViewer;
 		if (this.props.currentUser){
 			activityView = <ActivityGrid user={this.props.currentUser}/>
 			cardDeck = <FlashcardDeck user={this.props.currentUser} />
+			cardViewer = <FlashCardViewer user={this.props.currentUser} />
 		} else {
 			activityView = <p>Loading data...</p>
 			cardDeck = <p>Loading data...</p>
+			cardViewer = <p>Loading data...</p>
 		}
 		return (
 			<div className="dashboard">
@@ -98,6 +102,7 @@ var dashboard = React.createClass({
 				<div className="flashCards">
 					{cardDeck}
 				</div>
+				{cardViewer}
 			</div>
 		);
 	}

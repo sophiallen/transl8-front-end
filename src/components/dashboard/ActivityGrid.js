@@ -36,31 +36,25 @@ var ActivityGrid = React.createClass({
 			console.log('error occurred in saving set');
 		});
 	},
-	createCardSet: function(){
-		
-	},
 	render: function(){
-		var messages = <tr><td>'loading...'</td></tr>
+		var messages = (<tr><td>'loading...'</td></tr>);
 		if (this.state.messages){
 			messages = this.state.messages.map(this.eachItem);
-		}
-
+		}		
 		return (<div>
-				<table className="table table-hover">
-					<tbody>
-						<tr className="th">
-							<td>Select</td>
-							<td>Date</td>
-							<td>Direction</td>
-							<td>Untranslated</td>
-							<td>Translation</td>
-						</tr>
-						{messages}
-					</tbody>
-				</table>
-				<button onClick={this.createCardSet} className="btn btn-success">Create FlashCards</button>
-				<div>
-			);
+					<table className="table table-hover">
+						<tbody>
+							<tr className="th">
+								<td>Select</td>
+								<td>Date</td>
+								<td>Direction</td>
+								<td>Untranslated</td>
+								<td>Translation</td>
+							</tr>
+							{messages}
+						</tbody>
+					</table>
+		</div>)
 	}
 });
 
