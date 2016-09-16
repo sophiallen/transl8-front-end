@@ -7,6 +7,7 @@ var Flashcard = require('./dashboard/Flashcard.js');
 var FlashcardDeck = require('./dashboard/FlashcardDeck.js');
 var FlashCardViewer = require('./dashboard/FlashCardViewer.js');
 var langData = require('./../data/languages.js');
+var Chart = require('./dashboard/chartTest.js');
 
 var dashboard = React.createClass({
 	contextTypes: { //allow access to router via context
@@ -98,6 +99,7 @@ var dashboard = React.createClass({
 				</div>
 				{cardViewer}
 				<button className="btn btn-default" onClick={this.addSampleData}>Add Sample Data</button>
+				<Chart />
 			</div>
 		);
 	}

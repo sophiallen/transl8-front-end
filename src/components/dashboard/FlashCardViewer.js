@@ -1,4 +1,5 @@
 var React = require('react');
+var Link = require('react-router').Link;
 var FlashcardDeck = require('./FlashcardDeck.js');
 
 var FlashCardViewer = React.createClass({
@@ -34,8 +35,8 @@ var FlashCardViewer = React.createClass({
 		var currentDeck = this.state.currentDeck? <FlashcardDeck title={this.state.currentDeck.name} cards={this.state.currentDeck.cards} /> : <p>Select a deck above to view cards</p>;
 		
 		return (<div className="FlashCardViewer">
-					<h3>Your Flashcards</h3>
-
+					<h3>Your Flashcards </h3>
+					<Link to="/manage-flashcards">Go to Flashcard Manager</Link>
 					<form className="form-inline">
 						<div className="form-group">
 							<label>Select Flash Card Deck:   </label>
