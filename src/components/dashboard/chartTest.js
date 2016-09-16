@@ -12,27 +12,26 @@ var GraphComponent = React.createClass({
 				    value: 300,
 				    color:"#F7464A",
 				    highlight: "#FF5A5E",
-				    label: "Red"
+				    label: "English"
 				},
 				{
 				    value: 50,
 				    color: "#46BFBD",
 				    highlight: "#5AD3D1",
-				    label: "Green"
+				    label: "French"
 				},
 				{
 				    value: 100,
 				    color: "#FDB45C",
 				    highlight: "#FFC870",
-				    label: "Yellow"
+				    label: "Spanish"
 				}
 				]
 		}
 	},
 	render: function(){
 		return <div>
-			<PieChart data={this.state.chartData} width="300" height="300"/>
-			<button className="btn btn-default">Increase Jan</button>
+			<PieChart data={this.state.chartData} width="200" height="200"/>
 			</div>
 	}
 

@@ -31225,13 +31225,18 @@ var dashboard = React.createClass({displayName: "dashboard",
 		return (
 			React.createElement("div", {className: "dashboard"}, 
 				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
-
-				React.createElement("div", {className: "settings"}, 
-					React.createElement("h3", null, "Account Settings"), 
-					React.createElement(EditableText, {title: "Name", placeHolder: this.context.userData? this.context.userData.userName : 'loading...', keyName: "userName", onChange: this.update}), 
-					React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update}), 
-					React.createElement(EditableDropDown, {title: "Default 'From' Language", placeHolder: this.context.userData? this.context.userData.defaultFrom : 'loading', keyName: "defaultFrom", selectionData: langData, onChange: this.update}), 
-					React.createElement(EditableDropDown, {title: "Default 'To' Language", placeHolder: this.context.userData? this.context.userData.defaultTo : 'loading', keyName: "defaultTo", selectionData: langData, onChange: this.update})
+				React.createElement("div", {className: "row"}, 
+					React.createElement("div", {className: "settings col-md-6"}, 
+						React.createElement("h3", null, "Account Settings"), 
+						React.createElement(EditableText, {title: "Name", placeHolder: this.context.userData? this.context.userData.userName : 'loading...', keyName: "userName", onChange: this.update}), 
+						React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update}), 
+						React.createElement(EditableDropDown, {title: "Default 'From' Language", placeHolder: this.context.userData? this.context.userData.defaultFrom : 'loading', keyName: "defaultFrom", selectionData: langData, onChange: this.update}), 
+						React.createElement(EditableDropDown, {title: "Default 'To' Language", placeHolder: this.context.userData? this.context.userData.defaultTo : 'loading', keyName: "defaultTo", selectionData: langData, onChange: this.update})
+					), 
+					React.createElement("div", {className: "col-md-6 userPieChart"}, 
+						React.createElement("h3", null, "Your Language Use"), 
+						React.createElement(Chart, null)
+					)
 				), 
 
 				React.createElement("div", {className: "activity-feed"}, 
@@ -31972,27 +31977,26 @@ var GraphComponent = React.createClass({displayName: "GraphComponent",
 				    value: 300,
 				    color:"#F7464A",
 				    highlight: "#FF5A5E",
-				    label: "Red"
+				    label: "English"
 				},
 				{
 				    value: 50,
 				    color: "#46BFBD",
 				    highlight: "#5AD3D1",
-				    label: "Green"
+				    label: "French"
 				},
 				{
 				    value: 100,
 				    color: "#FDB45C",
 				    highlight: "#FFC870",
-				    label: "Yellow"
+				    label: "Spanish"
 				}
 				]
 		}
 	},
 	render: function(){
 		return React.createElement("div", null, 
-			React.createElement(PieChart, {data: this.state.chartData, width: "300", height: "300"}), 
-			React.createElement("button", {className: "btn btn-default"}, "Increase Jan")
+			React.createElement(PieChart, {data: this.state.chartData, width: "200", height: "200"})
 			)
 	}
 
