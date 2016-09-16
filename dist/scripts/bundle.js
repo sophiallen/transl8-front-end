@@ -31962,29 +31962,37 @@ var React = require('react');
 
 var LineChart = require('react-chartjs').Line;
 var BarChart = require('react-chartjs').Bar;
+var PieChart = require('react-chartjs').Pie;
 
 var GraphComponent = React.createClass({displayName: "GraphComponent",
 	getInitialState: function(){
 		return {
-			chartData: {
-				labels: ["January", "February", "March", "April", "May","June","July"],
-				datasets: [
-					{
-						data: [1,1.5,3,4,2.5,5,1]
-					}
+			chartData: [
+				{
+				    value: 300,
+				    color:"#F7464A",
+				    highlight: "#FF5A5E",
+				    label: "Red"
+				},
+				{
+				    value: 50,
+				    color: "#46BFBD",
+				    highlight: "#5AD3D1",
+				    label: "Green"
+				},
+				{
+				    value: 100,
+				    color: "#FDB45C",
+				    highlight: "#FFC870",
+				    label: "Yellow"
+				}
 				]
-			}
 		}
-	},
-	upJan: function(){
-		var dataset = this.state.chartData;
-		dataset.datasets[0].data[0] += 1;
-		this.setState({chartData: dataset})
 	},
 	render: function(){
 		return React.createElement("div", null, 
-			React.createElement(BarChart, {data: this.state.chartData, width: "600", height: "300"}), 
-			React.createElement("button", {className: "btn btn-default", onClick: this.upJan}, "Increase Jan")
+			React.createElement(PieChart, {data: this.state.chartData, width: "300", height: "300"}), 
+			React.createElement("button", {className: "btn btn-default"}, "Increase Jan")
 			)
 	}
 
