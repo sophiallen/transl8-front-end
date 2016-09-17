@@ -31138,26 +31138,171 @@ var HomePage = React.createClass({displayName: "HomePage",
 
 module.exports = HomePage;
 
-},{"./NavBar.js":254,"firebase":4,"react":246,"react-router":44}],250:[function(require,module,exports){
-var React = require('react');
-var firebase = require('firebase');
-var EditableText = require('./dashboard/EditableText.js');
-var EditableDropDown = require('./dashboard/EditableSelect.js');
-var ActivityGrid = require('./dashboard/ActivityGrid.js');
-var Flashcard = require('./dashboard/Flashcard.js');
-var FlashcardDeck = require('./dashboard/FlashcardDeck.js');
-var FlashCardViewer = require('./dashboard/FlashCardViewer.js');
-var langData = require('./../data/languages.js');
-var Chart = require('./dashboard/chartTest.js');
+},{"./NavBar.js":257,"firebase":4,"react":246,"react-router":44}],250:[function(require,module,exports){
+// var React = require('react');
+// var Link = require('react-router').Link;
+// var FlashcardDeck = require('./FlashcardDeck.js');
 
-var dashboard = React.createClass({displayName: "dashboard",
-	contextTypes: { //allow access to router via context
-		router: React.PropTypes.object.isRequired,
-		userData: React.PropTypes.object,
-		userMessages: React.PropTypes.object
+// var FlashCardViewer = React.createClass({
+// 	contextTypes: {
+// 		router: React.PropTypes.object,
+// 		userData: React.PropTypes.object
+// 	},
+// 	getInitialState: function(){ 
+// 		return {
+// 			currentUser: this.props.currentUser,
+// 			decks: []
+// 		}
+// 	},
+// 	componentWillMount: function(){
+// 		console.log('user data: ' + this.context.userData);
+// 		var that = this;
+// 		firebase.auth().onAuthStateChanged(firebaseUser => {
+// 			if (firebaseUser){
+// 				console.log('in flashcard view, found firebaseuser');
+// 				console.log('userid: ' + firebaseUser.uid);
+// 				that.getDecks(firebaseUser.uid);
+// 			} else {
+// 				console.log('No one logged in');
+// 				that.setState({currentUser: null, userDetails: null});
+// 			}
+// 		});
+// 	},
+// 	// checkLogin: function(){
+// 	// 	console.log('in checklogin');
+// 	// 	//small optimization: check to see if redirected from login as check for login status.
+// 	// 	var justLoggedIn = (this.props.location.state && this.props.location.state.loggedIn);
+// 	// 	console.log('just logged in: ' + justLoggedIn);
+
+// 	// 	if (!this.props.loggedIn && !justLoggedIn) {
+// 	// 		var thisRouter = this.context.router;
+// 	// 		var that = this;
+
+// 	// 		firebase.auth().onAuthStateChanged(firebaseUser => { 
+// 	// 			if (firebaseUser === null){
+// 	// 				//re-route to login page.
+// 	// 				thisRouter.push({
+// 	// 					pathname: '/login',
+// 	// 					state: {fromPage: '/flashcards'}
+// 	// 				});
+// 	// 			} else {
+// 	// 				console.log('in FlashCardViewer, user logged in');
+// 	// 			}
+// 	// 		});
+// 	// 	} 
+// 	// },
+// 	getDecks: function(userId){
+// 		console.log('in getDecks');
+// 		var that = this;
+// 		var decks = [];
+// 		firebase.database().ref('/user-cardsets/' + this.state.currentUser.uid).on('child_added', function(data) {
+// 			decks.push(data.val());
+// 			console.log('adding: ' + data.val());
+// 			that.setState({decks: decks});
+// 		});
+// 		// that.setState({decks: decks});
+
+// 	},
+// 	createDeckItem: function(item, index){
+// 		return <option key={index} value={item.name}>{item.name}</option>
+// 	},
+// 	selectDeck: function(){
+// 		var selection = this.refs.selectDeckDropDown.value;
+// 		var newDeck = this.state.decks.find(function(item){
+// 			return item.name === selection;
+// 		});
+// 		this.setState({currentDeck: newDeck});
+// 	},
+// 	render: function(){
+// 		if (this.state.decks.length > 0){
+// 			return (<div className="FlashCardViewer">
+// 						<h3>Your Flashcards </h3>
+// 						<Link to="/manage-flashcards">Go to Flashcard Manager</Link>
+// 						<form className="form-inline">
+// 							<div className="form-group">
+// 								<label>Select Flash Card Deck:   </label>
+// 								<select onChange={this.selectDeck} ref="selectDeckDropDown" className="form-control" defaultValue="current deck">
+// 									<option value="none">None </option>
+// 									// {/*this.state.decks.map(this.createDeckItem)*/}
+// 								</select>
+// 							</div>
+// 						</form>
+// 						<FlashcardDeck title={this.state.currentDeck.name} cards={this.state.currentDeck.cards} />
+// 				</div>)			
+// 		} else {
+// 			return <div>Loading...</div>
+// 		}
+
+// 	}
+// });
+
+// module.exports = FlashCardViewer;
+
+var React = require('react');
+var Link = require('react-router').Link;
+var FlashcardDeck = require('./FlashcardDeck.js');
+
+var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
+	propTypes: {
+		user: React.PropTypes.object.isRequired
 	},
 	getInitialState: function(){
-		return {};
+		return {
+			decks: []
+		}
+	},
+	componentWillMount: function(){ 
+		var that = this;
+		var decks = this.state.decks;
+		firebase.database().ref('/user-cardsets/' + this.props.user.uid).on('child_added', function(data) {
+			decks.push(data.val());
+			that.setState({decks: decks,
+				currentDeck: decks[0]});
+		});
+	},
+	createDeckItem: function(item, index){
+		return React.createElement("option", {key: index, value: item.name}, item.name)
+	},
+	selectDeck: function(){
+		var selection = this.refs.selectDeckDropDown.value;
+		var newDeck = this.state.decks.find(function(item){
+			return item.name === selection;
+		});
+		this.setState({currentDeck: newDeck});
+	},
+	render: function(){
+
+		var currentDeck = this.state.currentDeck? React.createElement(FlashcardDeck, {title: this.state.currentDeck.name, cards: this.state.currentDeck.cards}) : React.createElement("p", null, "Select a deck above to view cards");
+		
+		return (React.createElement("div", {className: "FlashCardViewer"}, 
+					React.createElement("h3", null, "Your Flashcards "), 
+					React.createElement(Link, {to: "/manage-flashcards"}, "Go to Flashcard Manager"), 
+					React.createElement("form", {className: "form-inline"}, 
+						React.createElement("div", {className: "form-group"}, 
+							React.createElement("label", null, "Select Flash Card Deck:   "), 
+							React.createElement("select", {onChange: this.selectDeck, ref: "selectDeckDropDown", className: "form-control", defaultValue: "none selected"}, 
+								React.createElement("option", {value: "none"}, "None "), 
+								this.state.decks.map(this.createDeckItem)
+							)
+						)
+					), 
+					currentDeck
+			))
+	}
+});
+
+module.exports = FlashCardViewer;
+
+module.exports = FlashCardViewer;
+
+},{"./FlashcardDeck.js":253,"react":246,"react-router":44}],251:[function(require,module,exports){
+var React = require('react');
+var FlashCardSelectView = require('./FlashCardSelectView.js');
+
+module.exports = React.createClass({displayName: "exports",
+	contextTypes: { //allow access to router via context
+		router: React.PropTypes.object.isRequired,
+		currentUser: React.PropTypes.object,
 	},
 	componentWillMount: function(){
 		//small optimization: check to see if redirected from login as check for login status.
@@ -31169,91 +31314,99 @@ var dashboard = React.createClass({displayName: "dashboard",
 
 			firebase.auth().onAuthStateChanged(firebaseUser => { 
 				if (firebaseUser === null){
+					console.log('in flashcards, rerouting to login...');
 					//re-route to login page.
 					thisRouter.push({
 						pathname: '/login',
-						state: {fromPage: '/dashboard'}
+						state: {fromPage: '/flashcards'}
 					});
 				} else {
-					console.log('in dash will mount, user logged in');
+					console.log('in flashcards will mount, user logged in');
 				}
 			});
 		} 
 	},
-	update: function(newDetailData, keyName){
-		var details = this.context.userData;
-		details[keyName] = newDetailData;
-
-		var updates = {};
-		updates['/users/' + this.props.currentUser.uid + '/' + keyName] = newDetailData;
-		var that = this;
-
-		this.props.onChange(details);
-
-		firebase.database().ref().update(updates).then(function(response){
-			console.log('in firebase promise, details: ' + details);
-			that.props.onChange(details);
-		});
-	},
-	addSampleData: function(){
-		var today = new Date();
-		var message = {
-			date: today.toDateString(),
-			untranslated: 'hello world',
-			direction: 'en-es',
-			translated: 'hola mundo'
-		}
-
-		var newPostKey = firebase.database().ref().child('user-messages/' + this.props.currentUser.uid).push().key;
-		console.log(newPostKey);
-
-		var updates = {};
-		updates['user-messages/' + this.props.currentUser.uid + '/' + newPostKey] = message;
-		firebase.database().ref().update(updates);
-	},
 	render: function(){
-		var activityView;
-		var cardDeck;
-		var cardViewer;
 		if (this.props.currentUser){
-			activityView = React.createElement(ActivityGrid, {user: this.props.currentUser})
-			cardViewer = React.createElement(FlashCardViewer, {user: this.props.currentUser})
+			return React.createElement(FlashCardSelectView, {user: this.props.currentUser})
+		} else if (this.context.currentUser){
+			return React.createElement(FlashCardSelectView, {user: this.context.currentUser})
 		} else {
-			activityView = React.createElement("p", null, "Loading data...")
-			cardViewer = React.createElement("p", null, "Loading data...")
+			return React.createElement("div", null, "Loading...")
 		}
-		return (
-			React.createElement("div", {className: "dashboard"}, 
-				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
-				React.createElement("div", {className: "row"}, 
-					React.createElement("div", {className: "settings col-md-6"}, 
-						React.createElement("h3", null, "Account Settings"), 
-						React.createElement(EditableText, {title: "Name", placeHolder: this.context.userData? this.context.userData.userName : 'loading...', keyName: "userName", onChange: this.update}), 
-						React.createElement(EditableText, {title: "Phone Number", placeHolder: this.context.userData? this.context.userData.phone : 'loading...', keyName: "phone", onChange: this.update}), 
-						React.createElement(EditableDropDown, {title: "Default 'From' Language", placeHolder: this.context.userData? this.context.userData.defaultFrom : 'loading', keyName: "defaultFrom", selectionData: langData, onChange: this.update}), 
-						React.createElement(EditableDropDown, {title: "Default 'To' Language", placeHolder: this.context.userData? this.context.userData.defaultTo : 'loading', keyName: "defaultTo", selectionData: langData, onChange: this.update})
-					), 
-					React.createElement("div", {className: "col-md-6 userPieChart"}, 
-						React.createElement("h3", null, "Your Language Use"), 
-						React.createElement(Chart, null)
-					)
-				), 
-
-				React.createElement("div", {className: "activity-feed"}, 
-					React.createElement("h3", null, "Recent Translations"), 
-					activityView	
-				), 
-				cardViewer, 
-				React.createElement("button", {className: "btn btn-default", onClick: this.addSampleData}, "Add Sample Data"), 
-				React.createElement(Chart, null)
-			)
-		);
 	}
 });
 
-module.exports = dashboard;
+},{"./FlashCardSelectView.js":250,"react":246}],252:[function(require,module,exports){
+var React = require('react');
 
-},{"./../data/languages.js":267,"./dashboard/ActivityGrid.js":258,"./dashboard/EditableSelect.js":260,"./dashboard/EditableText.js":261,"./dashboard/FlashCardViewer.js":262,"./dashboard/Flashcard.js":263,"./dashboard/FlashcardDeck.js":264,"./dashboard/chartTest.js":266,"firebase":4,"react":246}],251:[function(require,module,exports){
+var Flashcard = React.createClass({displayName: "Flashcard",
+	getInitialState: function(){
+		return {flipped: false}
+	},
+	flip: function(){
+		this.setState({flipped: !this.state.flipped});
+	},
+	render: function(){
+		var flipClass = this.state.flipped? 'flip-container flipped' : 'flip-container';
+
+		return (
+			React.createElement("div", {className: flipClass, onClick: this.flip}, 
+				React.createElement("div", {className: "flipper"}, 
+						React.createElement("div", {className: "front"}, 
+							React.createElement("h4", null, this.props.front)
+						), 
+						React.createElement("div", {className: "back"}, 
+							React.createElement("h4", null, this.props.back)		
+						)
+				)
+			)
+		)
+	}
+});
+
+module.exports = Flashcard;
+
+},{"react":246}],253:[function(require,module,exports){
+var React = require('react');
+var Flashcard = require('./Flashcard.js');
+
+var FlashcardDeck = React.createClass({displayName: "FlashcardDeck",
+	getInitialState: function(){
+		return {
+			currentCard: 0
+		}
+	},
+	eachCard: function(item, index){
+		var cardClass = (index === this.state.currentCard)? "current-card" : 'background-card';
+		return (React.createElement(Flashcard, {key: index, front: item.translated, back: item.untranslated, className: cardClass}));
+	},
+	nextCard: function(){
+		var nextCardIndex = (this.state.currentCard + 1)%this.props.cards.length;
+		this.setState({currentCard: nextCardIndex});
+	},
+	prevCard: function(){
+		var prevCardIndex = this.state.currentCard -1;
+		if (prevCardIndex == -1) prevCardIndex = this.props.cards.length-1;
+		this.setState({currentCard: prevCardIndex});
+	},
+	render: function(){
+		var cards =	this.props.cards.map(this.eachCard);
+		return (
+			React.createElement("div", {className: "card-deck"}, 
+				React.createElement("h3", null, this.props.title), 
+				cards[this.state.currentCard], 
+				React.createElement("div", {className: "deckNavBtns"}, 
+					React.createElement("button", {onClick: this.prevCard, className: "btn btn-danger"}, "Previous Card"), 
+					React.createElement("button", {onClick: this.nextCard, className: "btn btn-success"}, "Next Card")
+				)
+			))
+	}
+});
+
+module.exports = FlashcardDeck;
+
+},{"./Flashcard.js":252,"react":246}],254:[function(require,module,exports){
 var React = require('react');
 var Link = require('react-router').Link;
 
@@ -31283,7 +31436,7 @@ module.exports = React.createClass({displayName: "exports",
 	}
 });
 
-},{"react":246,"react-router":44}],252:[function(require,module,exports){
+},{"react":246,"react-router":44}],255:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var Link = require('react-router').Link;
@@ -31309,7 +31462,7 @@ module.exports = React.createClass({displayName: "exports",
 		);
 	} 
 });
-},{"firebase":4,"react":246,"react-router":44}],253:[function(require,module,exports){
+},{"firebase":4,"react":246,"react-router":44}],256:[function(require,module,exports){
 var React = require('react');
 var Link = require('react-router').Link;
 var firebase = require('firebase');
@@ -31376,7 +31529,7 @@ module.exports = React.createClass({displayName: "exports",
 	}
 });
 
-},{"firebase":4,"react":246,"react-router":44}],254:[function(require,module,exports){
+},{"firebase":4,"react":246,"react-router":44}],257:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -31403,7 +31556,8 @@ module.exports = React.createClass({displayName: "exports",
 					React.createElement("ul", {className: "nav navbar-nav"}, 
 						React.createElement("li", null, React.createElement(Link, {to: "/"}, "Home")), 
 						React.createElement("li", null, React.createElement(Link, {to: "/about"}, "About")), 
-						React.createElement("li", null, React.createElement(Link, {to: "/dashboard"}, "Dashboard"))
+						React.createElement("li", null, React.createElement(Link, {to: "/dashboard"}, "Dashboard")), 
+						React.createElement("li", null, React.createElement(Link, {to: "/flashcards"}, "Flashcards"))
 					), 
 					React.createElement("ul", {className: "nav navbar-nav navbar-right"}, 
 						regBtn, 
@@ -31413,7 +31567,7 @@ module.exports = React.createClass({displayName: "exports",
 			));
 	}
 });
-},{"react":246,"react-router":44}],255:[function(require,module,exports){
+},{"react":246,"react-router":44}],258:[function(require,module,exports){
 var React = require('react');
 
 var Link = require('react-router').Link;
@@ -31429,7 +31583,7 @@ module.exports = React.createClass({displayName: "exports",
 	}
 })
 
-},{"react":246,"react-router":44}],256:[function(require,module,exports){
+},{"react":246,"react-router":44}],259:[function(require,module,exports){
 var React = require('react');
 
 
@@ -31443,7 +31597,7 @@ module.exports = React.createClass({displayName: "exports",
 	}
 })
 
-},{"react":246}],257:[function(require,module,exports){
+},{"react":246}],260:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 
@@ -31504,7 +31658,7 @@ var Register = React.createClass({displayName: "Register",
 
 module.exports = Register;
 
-},{"firebase":4,"react":246}],258:[function(require,module,exports){
+},{"firebase":4,"react":246}],261:[function(require,module,exports){
 var React = require('react');
 var ActivityItem = require('./ActivityItem.js');
 var firebase = require('firebase');
@@ -31622,7 +31776,7 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 });
 
 module.exports = ActivityGrid;
-},{"./ActivityItem.js":259,"firebase":4,"react":246,"reactfire":247}],259:[function(require,module,exports){
+},{"./ActivityItem.js":262,"firebase":4,"react":246,"reactfire":247}],262:[function(require,module,exports){
 var React = require('react');
 
 var ActivityItem = React.createClass({displayName: "ActivityItem",
@@ -31649,7 +31803,112 @@ var ActivityItem = React.createClass({displayName: "ActivityItem",
 
 module.exports = ActivityItem;
 
-},{"react":246}],260:[function(require,module,exports){
+},{"react":246}],263:[function(require,module,exports){
+var React = require('react');
+var firebase = require('firebase');
+var UserSettingsView = require('./UserSettings.js');
+var ActivityGrid = require('./ActivityGrid.js');
+var langData = require('./../../data/languages.js');
+var Chart = require('./chartTest.js');
+
+var dashboard = React.createClass({displayName: "dashboard",
+	contextTypes: { //allow access to router via context
+		router: React.PropTypes.object.isRequired,
+		userData: React.PropTypes.object,
+		userMessages: React.PropTypes.object
+	},
+	componentWillMount: function(){
+		//small optimization: check to see if redirected from login as check for login status.
+		var justLoggedIn = (this.props.location.state && this.props.location.state.loggedIn);
+		
+		if (!this.props.loggedIn && !justLoggedIn) {
+			var thisRouter = this.context.router;
+			var that = this;
+
+			firebase.auth().onAuthStateChanged(firebaseUser => { 
+				if (firebaseUser === null){
+					//re-route to login page.
+					thisRouter.push({
+						pathname: '/login',
+						state: {fromPage: '/dashboard'}
+					});
+				} else {
+					console.log('in dash will mount, user logged in');
+				}
+			});
+		} 
+	},
+	update: function(newDetailData, keyName){
+		var details = this.context.userData;
+		details[keyName] = newDetailData;
+
+		var updates = {};
+		updates['/users/' + this.props.currentUser.uid + '/' + keyName] = newDetailData;
+		var that = this;
+
+		this.props.onChange(details);
+
+		firebase.database().ref().update(updates).then(function(response){
+			console.log('in firebase promise, details: ' + details);
+			that.props.onChange(details);
+		});
+	},
+	addSampleData: function(){
+		var today = new Date();
+		var message = {
+			date: today.toDateString(),
+			untranslated: 'hello world',
+			direction: 'en-es',
+			translated: 'hola mundo'
+		}
+
+		var newPostKey = firebase.database().ref().child('user-messages/' + this.props.currentUser.uid).push().key;
+		console.log(newPostKey);
+
+		var updates = {};
+		updates['user-messages/' + this.props.currentUser.uid + '/' + newPostKey] = message;
+		firebase.database().ref().update(updates);
+	},
+	render: function(){
+		var activityView;
+		var cardDeck;
+		var cardViewer;
+
+		if (this.props.currentUser){
+			activityView = React.createElement(ActivityGrid, {user: this.props.currentUser})
+			chart = React.createElement(Chart, {user: this.props.currentUser})
+		} else {
+			activityView = React.createElement("p", null, "Loading data...")
+			chart = React.createElement("p", null)
+		}
+		return (
+			React.createElement("div", {className: "dashboard"}, 
+				React.createElement("h1", {className: "page-header"}, "User Dashboard"), 
+				React.createElement("div", {className: "row"}, 
+
+					React.createElement("div", {className: "settings col-md-7"}, 
+						React.createElement(UserSettingsView, {userData: this.context.userData, langData: langData})
+					), 
+
+					React.createElement("div", {className: "col-md-5 userPieChart"}, 
+						React.createElement("h3", null, "Your Language Use"), 
+						chart
+					)
+				), 
+
+				React.createElement("div", {className: "activity-feed"}, 
+					React.createElement("h3", null, "Recent Translations"), 
+					activityView	
+				), 
+				React.createElement("button", {className: "btn btn-default", onClick: this.addSampleData}, "Add Sample Data")
+			)
+		);
+	}
+});
+
+module.exports = dashboard;
+
+},{"./../../data/languages.js":269,"./ActivityGrid.js":261,"./UserSettings.js":267,"./chartTest.js":268,"firebase":4,"react":246}],264:[function(require,module,exports){
 var React = require('react');
 
 
@@ -31710,7 +31969,7 @@ var EditableSelect = React.createClass({displayName: "EditableSelect",
 
 module.exports = EditableSelect;
 
-},{"react":246}],261:[function(require,module,exports){
+},{"react":246}],265:[function(require,module,exports){
 var React = require('react');
 
 
@@ -31761,133 +32020,7 @@ var EditableText = React.createClass({displayName: "EditableText",
 
 module.exports = EditableText;
 
-},{"react":246}],262:[function(require,module,exports){
-var React = require('react');
-var Link = require('react-router').Link;
-var FlashcardDeck = require('./FlashcardDeck.js');
-
-var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
-	propTypes: {
-		user: React.PropTypes.object.isRequired
-	},
-	getInitialState: function(){
-		return {
-			decks: []
-		}
-	},
-	componentWillMount: function(){ 
-		var that = this;
-		var decks = this.state.decks;
-		firebase.database().ref('/user-cardsets/' + this.props.user.uid).on('child_added', function(data) {
-			decks.push(data.val());
-			that.setState({decks: decks,
-				currentDeck: decks[0]});
-		});
-	},
-	createDeckItem: function(item, index){
-		return React.createElement("option", {key: index, value: item.name}, item.name)
-	},
-	selectDeck: function(){
-		var selection = this.refs.selectDeckDropDown.value;
-		var newDeck = this.state.decks.find(function(item){
-			return item.name === selection;
-		});
-		this.setState({currentDeck: newDeck});
-	},
-	render: function(){
-
-		var currentDeck = this.state.currentDeck? React.createElement(FlashcardDeck, {title: this.state.currentDeck.name, cards: this.state.currentDeck.cards}) : React.createElement("p", null, "Select a deck above to view cards");
-		
-		return (React.createElement("div", {className: "FlashCardViewer"}, 
-					React.createElement("h3", null, "Your Flashcards "), 
-					React.createElement(Link, {to: "/manage-flashcards"}, "Go to Flashcard Manager"), 
-					React.createElement("form", {className: "form-inline"}, 
-						React.createElement("div", {className: "form-group"}, 
-							React.createElement("label", null, "Select Flash Card Deck:   "), 
-							React.createElement("select", {onChange: this.selectDeck, ref: "selectDeckDropDown", className: "form-control", defaultValue: "none selected"}, 
-								React.createElement("option", {value: "none"}, "None "), 
-								this.state.decks.map(this.createDeckItem)
-							)
-						)
-					), 
-					currentDeck
-			))
-	}
-});
-
-module.exports = FlashCardViewer;
-
-},{"./FlashcardDeck.js":264,"react":246,"react-router":44}],263:[function(require,module,exports){
-var React = require('react');
-
-var Flashcard = React.createClass({displayName: "Flashcard",
-	getInitialState: function(){
-		return {flipped: false}
-	},
-	flip: function(){
-		this.setState({flipped: !this.state.flipped});
-	},
-	render: function(){
-		var flipClass = this.state.flipped? 'flip-container flipped' : 'flip-container';
-
-		return (
-			React.createElement("div", {className: flipClass, onClick: this.flip}, 
-				React.createElement("div", {className: "flipper"}, 
-						React.createElement("div", {className: "front"}, 
-							React.createElement("h4", null, this.props.front)
-						), 
-						React.createElement("div", {className: "back"}, 
-							React.createElement("h4", null, this.props.back)		
-						)
-				)
-			)
-		)
-	}
-});
-
-module.exports = Flashcard;
-
-},{"react":246}],264:[function(require,module,exports){
-var React = require('react');
-var Flashcard = require('./Flashcard.js');
-
-var FlashcardDeck = React.createClass({displayName: "FlashcardDeck",
-	getInitialState: function(){
-		return {
-			currentCard: 0
-		}
-	},
-	eachCard: function(item, index){
-		var cardClass = (index === this.state.currentCard)? "current-card" : 'background-card';
-		return (React.createElement(Flashcard, {key: index, front: item.translated, back: item.untranslated, className: cardClass}));
-	},
-	nextCard: function(){
-		var nextCardIndex = (this.state.currentCard + 1)%this.props.cards.length;
-		this.setState({currentCard: nextCardIndex});
-	},
-	prevCard: function(){
-		var prevCardIndex = this.state.currentCard -1;
-		if (prevCardIndex == -1) prevCardIndex = this.props.cards.length-1;
-		this.setState({currentCard: prevCardIndex});
-		console.log(prevCardIndex);
-	},
-	render: function(){
-		var cards =	this.props.cards.map(this.eachCard);
-		return (
-			React.createElement("div", {className: "card-deck"}, 
-				React.createElement("h3", null, this.props.title), 
-				cards[this.state.currentCard], 
-				React.createElement("div", {className: "deckNavBtns"}, 
-					React.createElement("button", {onClick: this.prevCard, className: "btn btn-danger"}, "Previous Card"), 
-					React.createElement("button", {onClick: this.nextCard, className: "btn btn-success"}, "Next Card")
-				)
-			))
-	}
-});
-
-module.exports = FlashcardDeck;
-
-},{"./Flashcard.js":263,"react":246}],265:[function(require,module,exports){
+},{"react":246}],266:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var Link = require('react-router').Link;
@@ -31962,49 +32095,97 @@ var UserDataForm = React.createClass({displayName: "UserDataForm",
 });
 
 module.exports = UserDataForm;
-},{"./../../data/languages.js":267,"firebase":4,"react":246,"react-router":44}],266:[function(require,module,exports){
+},{"./../../data/languages.js":269,"firebase":4,"react":246,"react-router":44}],267:[function(require,module,exports){
 var React = require('react');
+var EditableText = require('./EditableText.js');
+var EditableDropDown = require('./EditableSelect.js');
+
+var UserSettingsView = React.createClass({displayName: "UserSettingsView",
+	render: function(){
+		if (!this.props.userData){
+			return React.createElement("p", null, "Loading...")
+		} else {
+		return (React.createElement("div", null, 
+					React.createElement("h3", null, "Account Settings"), 
+					React.createElement(EditableText, {title: "Name", placeHolder: this.props.userData.userName, keyName: "userName", onChange: this.update}), 
+					React.createElement(EditableText, {title: "Phone Number", placeHolder: this.props.userData.phone, keyName: "phone", onChange: this.update}), 
+					React.createElement(EditableDropDown, {title: "Default 'From' Language", placeHolder: this.props.userData.defaultFrom, keyName: "defaultFrom", selectionData: this.props.langData, onChange: this.update}), 
+					React.createElement(EditableDropDown, {title: "Default 'To' Language", placeHolder: this.props.userData.defaultTo, keyName: "defaultTo", selectionData: this.props.langData, onChange: this.update})			
+				))			
+		}
+	}
+});
+
+module.exports = UserSettingsView;
+
+},{"./EditableSelect.js":264,"./EditableText.js":265,"react":246}],268:[function(require,module,exports){
+var React = require('react');
+var Firebase = require('firebase');
 
 var LineChart = require('react-chartjs').Line;
 var BarChart = require('react-chartjs').Bar;
 var PieChart = require('react-chartjs').Pie;
 
+var langColors = {
+	English: {
+		color:"#F7464A",
+		highlight: "#FF5A5E"
+	},
+	Spanish: {
+		color: "#FDB45C",
+	    highlight: "#FFC870"
+	},
+	French: {
+		color: "#46BFBD",
+	    highlight: "#5AD3D1"
+	}
+}
+
 var GraphComponent = React.createClass({displayName: "GraphComponent",
 	getInitialState: function(){
 		return {
-			chartData: [
-				{
-				    value: 300,
-				    color:"#F7464A",
-				    highlight: "#FF5A5E",
-				    label: "English"
-				},
-				{
-				    value: 50,
-				    color: "#46BFBD",
-				    highlight: "#5AD3D1",
-				    label: "French"
-				},
-				{
-				    value: 100,
-				    color: "#FDB45C",
-				    highlight: "#FFC870",
-				    label: "Spanish"
-				}
-				]
+			chartData: []
 		}
 	},
-	render: function(){
-		return React.createElement("div", null, 
-			React.createElement(PieChart, {data: this.state.chartData, width: "200", height: "200"})
-			)
-	}
+	componentWillMount: function(){
+		var that = this;
+		var chartData = this.state.chartData;
+		firebase.database().ref('/user-langdata/' + this.props.user.uid).on('child_added', function(data) {
+			var formatted = that.formatLangData(data.val());
+			chartData.push(formatted);
+			that.setState({chartData: chartData});
+		});
+	},
+	addSampleData: function(){
+		var langObj = [
+			{langName: 'English', numTexts: 25},
+			{langName: 'Spanish', numTexts: 32},
+			{langName: 'French', numTexts: 15}
+		]
 
+		var updates = {};
+		updates['user-langdata/' + this.props.user.uid] = langObj;
+		firebase.database().ref().update(updates);
+	},
+	formatLangData: function(langObj){
+		var newData = {
+			value: langObj.numTexts,
+			color: langColors[langObj.langName].color,
+			highlight: langColors[langObj.langName].highlight,
+			label: langObj.langName
+		}
+		return newData;
+	},
+	render: function(){
+		return (React.createElement("div", null, 
+					React.createElement(PieChart, {data: this.state.chartData, width: "200", height: "200"})
+				))
+	}
 });
 
 module.exports = GraphComponent;
 
-},{"react":246,"react-chartjs":6}],267:[function(require,module,exports){
+},{"firebase":4,"react":246,"react-chartjs":6}],269:[function(require,module,exports){
 var languages = [
 	{langName: 'Azerbaijan', langCode: 'az'},
 	{langName: 'Albanian', langCode: 'sq'},
@@ -32095,7 +32276,7 @@ var languages = [
 
 module.exports = languages;
 
-},{}],268:[function(require,module,exports){
+},{}],270:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -32103,7 +32284,7 @@ var routes = require('./router.js');
 
 ReactDOM.render(routes, document.getElementById('app'));
 
-},{"./router.js":269,"react":246,"react-dom":14}],269:[function(require,module,exports){
+},{"./router.js":271,"react":246,"react-dom":14}],271:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
@@ -32123,7 +32304,8 @@ var LogOut = require('./components/LogOut.js');
 var ParamTest = require('./components/ParamSample.js');
 var Register = require('./components/Register.js');
 var SetUp = require('./components/dashboard/UserDataForm.js');
-var Dashboard = require('./components/Dashboard.js');
+var Dashboard = require('./components/dashboard/Dashboard.js');
+var Flashcards = require('./components/Flashcards/FlashCardWrapper.js');
 var NotFound = require('./components/NotFound.js');
 
 
@@ -32140,6 +32322,7 @@ var routes = (
 				React.createElement(Route, {path: "/register", component: Register}), 
 				React.createElement(Route, {path: "/setup", component: SetUp}), 
 				React.createElement(Route, {path: "/dashboard", component: Dashboard}), 
+				React.createElement(Route, {path: "/flashcards", component: Flashcards}), 
 				React.createElement(Route, {path: "*", component: NotFound})
 			)
 		)
@@ -32147,7 +32330,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/About.js":248,"./components/App.js":249,"./components/Dashboard.js":250,"./components/Home.js":251,"./components/LogOut.js":252,"./components/Login.js":253,"./components/NotFound.js":255,"./components/ParamSample.js":256,"./components/Register.js":257,"./components/dashboard/UserDataForm.js":265,"./utils/authenticate.js":270,"react":246,"react-dom":14,"react-router":44}],270:[function(require,module,exports){
+},{"./components/About.js":248,"./components/App.js":249,"./components/Flashcards/FlashCardWrapper.js":251,"./components/Home.js":254,"./components/LogOut.js":255,"./components/Login.js":256,"./components/NotFound.js":258,"./components/ParamSample.js":259,"./components/Register.js":260,"./components/dashboard/Dashboard.js":263,"./components/dashboard/UserDataForm.js":266,"./utils/authenticate.js":272,"react":246,"react-dom":14,"react-router":44}],272:[function(require,module,exports){
 var React = require('react');
 var firebase = require('firebase');
 var config = require('./../../firebase.config.js');
@@ -32171,4 +32354,4 @@ function requireAuth(nextState, replace){
 
 module.exports = requireAuth;
 
-},{"./../../firebase.config.js":1,"firebase":4,"react":246}]},{},[268]);
+},{"./../../firebase.config.js":1,"firebase":4,"react":246}]},{},[270]);

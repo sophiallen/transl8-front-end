@@ -18,7 +18,7 @@ var ParamTest = require('./components/ParamSample.js');
 var Register = require('./components/Register.js');
 var SetUp = require('./components/dashboard/UserDataForm.js');
 var Dashboard = require('./components/dashboard/Dashboard.js');
-var Flashcards = require('./components/Flashcards/FlashCardViewer.js');
+var Flashcards = require('./components/Flashcards/FlashCardWrapper.js');
 var NotFound = require('./components/NotFound.js');
 
 
