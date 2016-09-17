@@ -1,12 +1,10 @@
 var React = require('react');
 var firebase = require('firebase');
-var EditableText = require('./dashboard/EditableText.js');
-var EditableDropDown = require('./dashboard/EditableSelect.js');
+var UserSettingsView = require('./dashboard/UserSettings.js');
 var ActivityGrid = require('./dashboard/ActivityGrid.js');
-var Flashcard = require('./dashboard/Flashcard.js');
-var FlashcardDeck = require('./dashboard/FlashcardDeck.js');
-var FlashCardViewer = require('./dashboard/FlashCardViewer.js');
-var langData = require('./../data/languages.js');
+
+// var FlashCardViewer = require('./dashboard/FlashCardViewer.js');
+var langData = require('./../../data/languages.js');
 var Chart = require('./dashboard/chartTest.js');
 
 var dashboard = React.createClass({
@@ -14,9 +12,6 @@ var dashboard = React.createClass({
 		router: React.PropTypes.object.isRequired,
 		userData: React.PropTypes.object,
 		userMessages: React.PropTypes.object
-	},
-	getInitialState: function(){
-		return {};
 	},
 	componentWillMount: function(){
 		//small optimization: check to see if redirected from login as check for login status.
@@ -74,27 +69,32 @@ var dashboard = React.createClass({
 		var activityView;
 		var cardDeck;
 		var cardViewer;
+		var sampleLangData = [
+			{langName: 'English', numTexts: 30},
+			{langName: 'French', numTexts: 15},
+			{langName: 'Spanish', numTexts: 50}
+		];
+
+		var chart;
 		if (this.props.currentUser){
 			activityView = <ActivityGrid user={this.props.currentUser}/>
-			cardViewer = <FlashCardViewer user={this.props.currentUser} />
+			chart = <Chart user={this.props.currentUser} />
 		} else {
 			activityView = <p>Loading data...</p>
-			cardViewer = <p>Loading data...</p>
+			chart = <p></p>
 		}
 		return (
 			<div className="dashboard">
 				<h1 className="page-header">User Dashboard</h1>
 				<div className="row">
-					<div className="settings col-md-6">
-						<h3>Account Settings</h3>
-						<EditableText title="Name" placeHolder={this.context.userData? this.context.userData.userName : 'loading...'} keyName="userName" onChange={this.update} />
-						<EditableText title="Phone Number" placeHolder={this.context.userData? this.context.userData.phone : 'loading...'} keyName="phone" onChange={this.update} />
-						<EditableDropDown title="Default 'From' Language" placeHolder={this.context.userData? this.context.userData.defaultFrom : 'loading'} keyName="defaultFrom" selectionData={langData} onChange={this.update} />
-						<EditableDropDown title="Default 'To' Language" placeHolder={this.context.userData? this.context.userData.defaultTo : 'loading'} keyName="defaultTo" selectionData={langData} onChange={this.update} />
+
+					<div className="settings col-md-7">
+						<UserSettingsView userData={this.context.userData} langData={langData}/>
 					</div>
-					<div className="col-md-6 userPieChart">
+
+					<div className="col-md-5 userPieChart">
 						<h3>Your Language Use</h3>
-						<Chart />
+						{chart}
 					</div>
 				</div>
 
@@ -102,9 +102,7 @@ var dashboard = React.createClass({
 					<h3>Recent Translations</h3>
 					{activityView}	
 				</div>
-				{cardViewer}
 				<button className="btn btn-default" onClick={this.addSampleData}>Add Sample Data</button>
-				<Chart />
 			</div>
 		);
 	}

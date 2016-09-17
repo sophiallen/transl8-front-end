@@ -25,6 +25,7 @@ module.exports = React.createClass({
 						<li><Link to="/">Home</Link></li>
 						<li><Link to="/about">About</Link></li>
 						<li><Link to="/dashboard">Dashboard</Link></li>
+						<li><Link to="/flashcards">Flashcards</Link></li>
 					</ul>
 					<ul className="nav navbar-nav navbar-right">
 						{regBtn}
