@@ -31139,105 +31139,6 @@ var HomePage = React.createClass({displayName: "HomePage",
 module.exports = HomePage;
 
 },{"./NavBar.js":257,"firebase":4,"react":246,"react-router":44}],250:[function(require,module,exports){
-// var React = require('react');
-// var Link = require('react-router').Link;
-// var FlashcardDeck = require('./FlashcardDeck.js');
-
-// var FlashCardViewer = React.createClass({
-// 	contextTypes: {
-// 		router: React.PropTypes.object,
-// 		userData: React.PropTypes.object
-// 	},
-// 	getInitialState: function(){ 
-// 		return {
-// 			currentUser: this.props.currentUser,
-// 			decks: []
-// 		}
-// 	},
-// 	componentWillMount: function(){
-// 		console.log('user data: ' + this.context.userData);
-// 		var that = this;
-// 		firebase.auth().onAuthStateChanged(firebaseUser => {
-// 			if (firebaseUser){
-// 				console.log('in flashcard view, found firebaseuser');
-// 				console.log('userid: ' + firebaseUser.uid);
-// 				that.getDecks(firebaseUser.uid);
-// 			} else {
-// 				console.log('No one logged in');
-// 				that.setState({currentUser: null, userDetails: null});
-// 			}
-// 		});
-// 	},
-// 	// checkLogin: function(){
-// 	// 	console.log('in checklogin');
-// 	// 	//small optimization: check to see if redirected from login as check for login status.
-// 	// 	var justLoggedIn = (this.props.location.state && this.props.location.state.loggedIn);
-// 	// 	console.log('just logged in: ' + justLoggedIn);
-
-// 	// 	if (!this.props.loggedIn && !justLoggedIn) {
-// 	// 		var thisRouter = this.context.router;
-// 	// 		var that = this;
-
-// 	// 		firebase.auth().onAuthStateChanged(firebaseUser => { 
-// 	// 			if (firebaseUser === null){
-// 	// 				//re-route to login page.
-// 	// 				thisRouter.push({
-// 	// 					pathname: '/login',
-// 	// 					state: {fromPage: '/flashcards'}
-// 	// 				});
-// 	// 			} else {
-// 	// 				console.log('in FlashCardViewer, user logged in');
-// 	// 			}
-// 	// 		});
-// 	// 	} 
-// 	// },
-// 	getDecks: function(userId){
-// 		console.log('in getDecks');
-// 		var that = this;
-// 		var decks = [];
-// 		firebase.database().ref('/user-cardsets/' + this.state.currentUser.uid).on('child_added', function(data) {
-// 			decks.push(data.val());
-// 			console.log('adding: ' + data.val());
-// 			that.setState({decks: decks});
-// 		});
-// 		// that.setState({decks: decks});
-
-// 	},
-// 	createDeckItem: function(item, index){
-// 		return <option key={index} value={item.name}>{item.name}</option>
-// 	},
-// 	selectDeck: function(){
-// 		var selection = this.refs.selectDeckDropDown.value;
-// 		var newDeck = this.state.decks.find(function(item){
-// 			return item.name === selection;
-// 		});
-// 		this.setState({currentDeck: newDeck});
-// 	},
-// 	render: function(){
-// 		if (this.state.decks.length > 0){
-// 			return (<div className="FlashCardViewer">
-// 						<h3>Your Flashcards </h3>
-// 						<Link to="/manage-flashcards">Go to Flashcard Manager</Link>
-// 						<form className="form-inline">
-// 							<div className="form-group">
-// 								<label>Select Flash Card Deck:   </label>
-// 								<select onChange={this.selectDeck} ref="selectDeckDropDown" className="form-control" defaultValue="current deck">
-// 									<option value="none">None </option>
-// 									// {/*this.state.decks.map(this.createDeckItem)*/}
-// 								</select>
-// 							</div>
-// 						</form>
-// 						<FlashcardDeck title={this.state.currentDeck.name} cards={this.state.currentDeck.cards} />
-// 				</div>)			
-// 		} else {
-// 			return <div>Loading...</div>
-// 		}
-
-// 	}
-// });
-
-// module.exports = FlashCardViewer;
-
 var React = require('react');
 var Link = require('react-router').Link;
 var FlashcardDeck = require('./FlashcardDeck.js');
@@ -31275,13 +31176,11 @@ var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
 		var currentDeck = this.state.currentDeck? React.createElement(FlashcardDeck, {title: this.state.currentDeck.name, cards: this.state.currentDeck.cards}) : React.createElement("p", null, "Select a deck above to view cards");
 		
 		return (React.createElement("div", {className: "FlashCardViewer"}, 
-					React.createElement("h3", null, "Your Flashcards "), 
-					React.createElement(Link, {to: "/manage-flashcards"}, "Go to Flashcard Manager"), 
+					React.createElement("h1", {className: "pg-header"}, "Your Flashcards "), 
 					React.createElement("form", {className: "form-inline"}, 
 						React.createElement("div", {className: "form-group"}, 
 							React.createElement("label", null, "Select Flash Card Deck:   "), 
-							React.createElement("select", {onChange: this.selectDeck, ref: "selectDeckDropDown", className: "form-control", defaultValue: "none selected"}, 
-								React.createElement("option", {value: "none"}, "None "), 
+							React.createElement("select", {onChange: this.selectDeck, ref: "selectDeckDropDown", className: "form-control"}, 
 								this.state.decks.map(this.createDeckItem)
 							)
 						)
@@ -31314,15 +31213,12 @@ module.exports = React.createClass({displayName: "exports",
 
 			firebase.auth().onAuthStateChanged(firebaseUser => { 
 				if (firebaseUser === null){
-					console.log('in flashcards, rerouting to login...');
-					//re-route to login page.
+					//no one logged in, re-route to login page.
 					thisRouter.push({
 						pathname: '/login',
 						state: {fromPage: '/flashcards'}
 					});
-				} else {
-					console.log('in flashcards will mount, user logged in');
-				}
+				} 
 			});
 		} 
 	},
@@ -31393,13 +31289,13 @@ var FlashcardDeck = React.createClass({displayName: "FlashcardDeck",
 	render: function(){
 		var cards =	this.props.cards.map(this.eachCard);
 		return (
-			React.createElement("div", {className: "card-deck"}, 
+			React.createElement("div", {className: "wrap-deck"}, 
 				React.createElement("h3", null, this.props.title), 
-				cards[this.state.currentCard], 
-				React.createElement("div", {className: "deckNavBtns"}, 
-					React.createElement("button", {onClick: this.prevCard, className: "btn btn-danger"}, "Previous Card"), 
-					React.createElement("button", {onClick: this.nextCard, className: "btn btn-success"}, "Next Card")
-				)
+				React.createElement("i", {onClick: this.prevCard, className: "fa fa-arrow-circle-left fa-4x", "aria-hidden": "true"}), 
+				React.createElement("div", {className: "card-deck"}, 
+						cards[this.state.currentCard]
+				), 
+				React.createElement("i", {onClick: this.nextCard, className: "fa fa-arrow-circle-right fa-4x", "aria-hidden": "true"})
 			))
 	}
 });

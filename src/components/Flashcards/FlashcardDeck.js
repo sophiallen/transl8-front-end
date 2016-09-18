@@ -23,13 +23,13 @@ var FlashcardDeck = React.createClass({
 	render: function(){
 		var cards =	this.props.cards.map(this.eachCard);
 		return (
-			<div className="card-deck">
+			<div className="wrap-deck">
 				<h3>{this.props.title}</h3>
-				{cards[this.state.currentCard]}
-				<div className="deckNavBtns">
-					<button onClick={this.prevCard} className="btn btn-danger">Previous Card</button>
-					<button onClick={this.nextCard} className="btn btn-success">Next Card</button>
+				<i onClick={this.prevCard} className="fa fa-arrow-circle-left fa-4x" aria-hidden="true"></i>
+				<div className="card-deck">
+						{cards[this.state.currentCard]}
 				</div>
+				<i onClick={this.nextCard} className="fa fa-arrow-circle-right fa-4x" aria-hidden="true"></i>
 			</div>)
 	}
 });

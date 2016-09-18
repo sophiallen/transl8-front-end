@@ -35,13 +35,11 @@ var FlashCardViewer = React.createClass({
 		var currentDeck = this.state.currentDeck? <FlashcardDeck title={this.state.currentDeck.name} cards={this.state.currentDeck.cards} /> : <p>Select a deck above to view cards</p>;
 		
 		return (<div className="FlashCardViewer">
-					<h3>Your Flashcards </h3>
-					<Link to="/manage-flashcards">Go to Flashcard Manager</Link>
+					<h1 className="pg-header">Your Flashcards </h1>
 					<form className="form-inline">
 						<div className="form-group">
 							<label>Select Flash Card Deck:   </label>
-							<select onChange={this.selectDeck} ref="selectDeckDropDown" className="form-control" defaultValue="none selected">
-								<option value="none">None </option>
+							<select onChange={this.selectDeck} ref="selectDeckDropDown" className="form-control">
 								{this.state.decks.map(this.createDeckItem)}
 							</select>
 						</div>
