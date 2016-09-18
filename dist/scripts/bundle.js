@@ -31557,6 +31557,7 @@ module.exports = Register;
 },{"firebase":4,"react":246}],261:[function(require,module,exports){
 var React = require('react');
 var ActivityItem = require('./ActivityItem.js');
+var Link = require('react-router').Link;
 var firebase = require('firebase');
 var ReactFireMixin = require('reactfire');
 
@@ -31581,18 +31582,6 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 			React.createElement(ActivityItem, {update: this.handleSelect, itemIndex: index, key: index, date: item.date, direction: item.direction, text: item.untranslated, translation: item.translated})
 		)
 	},
-	createCardSet: function(){
-		var newSetKey = firebase.database().ref().child('user-cards/' + this.props.currentUser.uid).push().key;
-
-		firebase.database().ref('user-cards/' + this.props.currentUser.uid + '/' + newSetKey).set({
-			setName: 'Test Set',
-			cards: this.context.userMessages
-		}).then(function(){
-			console.log('successfully saved set');
-		}).catch(function(){
-			console.log('error occurred in saving set');
-		});
-	},
 	handleSelect: function(checked, index){ //saves indices of selected items to array.
 		var selected = this.state.selected;
 		if (checked){
@@ -31616,14 +31605,18 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 			name: this.refs.newText.value,
 			cards: cards
 		}
+
 		var userId = this.props.user.uid;
-		var newSetKey = firebase.database().ref().child('user-cards/' + userId).push().key;
+		var newSetKey = firebase.database().ref().child('user-cardsets/' + userId).push().key;
 		
+		var that = this;
 		firebase.database().ref('user-cardsets/' + userId+ '/' + newSetKey).set(newDeck)
 		.then(function(){
 			console.log('successfully saved flashcard set to db');
+			that.setState({showFeedback: true, dbResponse: 1});
 		}).catch(function(){
 			console.log('error occurred in saving set');
+			that.setState({showFeedback: true, dbResponse: -1});
 		});
 		console.log(newDeck);
 	},
@@ -31643,13 +31636,29 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 				)
 			))
 	},
+	displayFeedback: function(){
+		if (this.state.dbResponse === 1){
+			return (React.createElement("div", {className: "alert alert-success"}, 
+						React.createElement("p", null, "Success!", React.createElement(Link, {to: "/flashcards"}, "Go to Flashcards"), " to use your deck.", 
+						React.createElement("button", {onClick: this.hideFeedback, className: "btn btn-sm pull-right"}, "X")
+					)));
+		} else {
+			return (React.createElement("div", {className: "alrt alert-danger"}, 
+				React.createElement("p", null, "Error: unable to save flashcards. Please try again later.", 
+				React.createElement("button", {onClick: this.hideFeedback, className: "btn btn-sm pull-right"}, "X")
+				)));
+		}
+	},
+	hideFeedback: function(){
+		this.setState({showFeedback: false});
+	},
 	render: function(){
 		var messages = (React.createElement("tr", null, React.createElement("td", null, "'loading...'")));
 		if (this.state.messages){
 			messages = this.state.messages.map(this.eachItem);
 		}
 		var form = this.state.showForm? this.renderForm() : '';
-
+		var feedback = this.state.showFeedback? this.displayFeedback() : '';
 		return (React.createElement("div", null, 
 					React.createElement("table", {className: "table table-hover"}, 
 						React.createElement("tbody", null, 
@@ -31663,16 +31672,15 @@ var ActivityGrid = React.createClass({displayName: "ActivityGrid",
 							messages
 						)
 					), 
-					React.createElement("button", {onClick: this.showForm, 
-					 disabled: this.state.selected.length > 0? '' : 'disabled', 
-					 className: "btn btn-danger"}, "Create Deck from Selected"), 
-					form
-		))
+					React.createElement("button", {onClick: this.showForm, disabled: this.state.selected.length > 0? '' : 'disabled', className: "btn btn-danger"}, "Create Deck from Selected"), 
+					form, 
+					feedback
+				))
 	}
 });
 
 module.exports = ActivityGrid;
-},{"./ActivityItem.js":262,"firebase":4,"react":246,"reactfire":247}],262:[function(require,module,exports){
+},{"./ActivityItem.js":262,"firebase":4,"react":246,"react-router":44,"reactfire":247}],262:[function(require,module,exports){
 var React = require('react');
 
 var ActivityItem = React.createClass({displayName: "ActivityItem",
