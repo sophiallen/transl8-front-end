@@ -73,7 +73,7 @@ div.userPieChart {
 
 .flip-container, .front, .back {
 	width: 250px;
-	height: 250px;
+	height: 275px;
 }
 
 
@@ -141,6 +141,7 @@ div.FlashCardViewer {
 
 div.wrap-deck {
 	text-align: center;
+	margin-bottom: 3em;
 }
 
 div.wrap-deck h3 {

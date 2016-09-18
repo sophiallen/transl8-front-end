@@ -31176,7 +31176,7 @@ var FlashCardViewer = React.createClass({displayName: "FlashCardViewer",
 		var currentDeck = this.state.currentDeck? React.createElement(FlashcardDeck, {title: this.state.currentDeck.name, cards: this.state.currentDeck.cards}) : React.createElement("p", null, "Select a deck above to view cards");
 		
 		return (React.createElement("div", {className: "FlashCardViewer"}, 
-					React.createElement("h1", {className: "pg-header"}, "Your Flashcards "), 
+					React.createElement("h1", {className: "page-header"}, "Your Flashcards "), 
 					React.createElement("form", {className: "form-inline"}, 
 						React.createElement("div", {className: "form-group"}, 
 							React.createElement("label", null, "Select Flash Card Deck:   "), 

@@ -35,7 +35,7 @@ var FlashCardViewer = React.createClass({
 		var currentDeck = this.state.currentDeck? <FlashcardDeck title={this.state.currentDeck.name} cards={this.state.currentDeck.cards} /> : <p>Select a deck above to view cards</p>;
 		
 		return (<div className="FlashCardViewer">
-					<h1 className="pg-header">Your Flashcards </h1>
+					<h1 className="page-header">Your Flashcards </h1>
 					<form className="form-inline">
 						<div className="form-group">
 							<label>Select Flash Card Deck:   </label>
