@@ -11,9 +11,10 @@ var FlashCardViewer = React.createClass({
 			decks: []
 		}
 	},
-	componentWillMount: function(){ 
+	componentDidMount: function(){ 
 		var that = this;
 		var decks = this.state.decks;
+
 		firebase.database().ref('/user-cardsets/' + this.props.user.uid).on('child_added', function(data) {
 			decks.push(data.val());
 			that.setState({decks: decks,
@@ -48,7 +49,5 @@ var FlashCardViewer = React.createClass({
 			</div>)
 	}
 });
-
-module.exports = FlashCardViewer;
 
 module.exports = FlashCardViewer;
