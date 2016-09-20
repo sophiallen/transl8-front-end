@@ -15,10 +15,13 @@ var FlashCardViewer = React.createClass({
 		var that = this;
 		var decks = this.state.decks;
 
-		firebase.database().ref('/user-cardsets/' + this.props.user.uid).on('child_added', function(data) {
-			decks.push(data.val());
-			that.setState({decks: decks,
-				currentDeck: decks[0]});
+		firebase.database().ref('/user-cardsets/' + this.props.user.uid).once('value')
+		.then(function(snapshot) { //get intial details
+			var cardsObj = snapshot.val();
+			for (deck in decksObj ){
+				decks.push(decksObj[deck]);
+			}
+			that.setState({decks: decks, currentDeck: decks[0]});
 		});
 	},
 	createDeckItem: function(item, index){
