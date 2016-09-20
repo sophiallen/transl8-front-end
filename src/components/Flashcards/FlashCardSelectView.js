@@ -17,7 +17,7 @@ var FlashCardViewer = React.createClass({
 
 		firebase.database().ref('/user-cardsets/' + this.props.user.uid).once('value')
 		.then(function(snapshot) { //get intial details
-			var cardsObj = snapshot.val();
+			var decksObj = snapshot.val();
 			for (deck in decksObj ){
 				decks.push(decksObj[deck]);
 			}
