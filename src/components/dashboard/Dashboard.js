@@ -81,7 +81,7 @@ var dashboard = React.createClass({
 				<div className="row">
 
 					<div className="settings col-md-7">
-						<UserSettingsView userData={this.context.userData} langData={langData}/>
+						<UserSettingsView userData={this.context.userData} onChange={this.update} langData={langData}/>
 					</div>
 
 					<div className="col-md-5 userPieChart">

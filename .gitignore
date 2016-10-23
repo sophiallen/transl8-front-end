@@ -2,3 +2,5 @@ node_modules
 keys.js
 firebase.config.js
 dist/
+*.zip
+images/

@@ -31793,7 +31793,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 				React.createElement("div", {className: "row"}, 
 
 					React.createElement("div", {className: "settings col-md-7"}, 
-						React.createElement(UserSettingsView, {userData: this.context.userData, langData: langData})
+						React.createElement(UserSettingsView, {userData: this.context.userData, onChange: this.update, langData: langData})
 					), 
 
 					React.createElement("div", {className: "col-md-5 userPieChart"}, 
@@ -32007,16 +32007,17 @@ var EditableText = require('./EditableText.js');
 var EditableDropDown = require('./EditableSelect.js');
 
 var UserSettingsView = React.createClass({displayName: "UserSettingsView",
+
 	render: function(){
 		if (!this.props.userData){
 			return React.createElement("p", null, "Loading...")
 		} else {
 		return (React.createElement("div", null, 
 					React.createElement("h3", null, "Account Settings"), 
-					React.createElement(EditableText, {title: "Name", placeHolder: this.props.userData.userName, keyName: "userName", onChange: this.update}), 
-					React.createElement(EditableText, {title: "Phone Number", placeHolder: this.props.userData.phone, keyName: "phone", onChange: this.update}), 
-					React.createElement(EditableDropDown, {title: "Default 'From' Language", placeHolder: this.props.userData.defaultFrom, keyName: "defaultFrom", selectionData: this.props.langData, onChange: this.update}), 
-					React.createElement(EditableDropDown, {title: "Default 'To' Language", placeHolder: this.props.userData.defaultTo, keyName: "defaultTo", selectionData: this.props.langData, onChange: this.update})			
+					React.createElement(EditableText, {title: "Name", placeHolder: this.props.userData.userName, keyName: "userName", onChange: this.props.onChange}), 
+					React.createElement(EditableText, {title: "Phone Number", placeHolder: this.props.userData.phone, keyName: "phone", onChange: this.props.onChange}), 
+					React.createElement(EditableDropDown, {title: "Default 'From' Language", placeHolder: this.props.userData.defaultFrom, keyName: "defaultFrom", selectionData: this.props.langData, onChange: this.props.onChange}), 
+					React.createElement(EditableDropDown, {title: "Default 'To' Language", placeHolder: this.props.userData.defaultTo, keyName: "defaultTo", selectionData: this.props.langData, onChange: this.props.onChange})			
 				))			
 		}
 	}
