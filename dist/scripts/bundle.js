@@ -31759,6 +31759,25 @@ var dashboard = React.createClass({displayName: "dashboard",
 			that.props.onChange(details);
 		});
 	},
+	addSampleClass: function(){
+		//create a new class id 
+		console.log("adding a new teacher-class!");
+		var newClassID = firebase.database().ref().child('teacher-classes/' + this.props.currentUser.uid).push().key;
+
+		var newClass = {
+			name: 'English 250',
+			//temp: using names for now until sample student accounts created. 
+			students: ['Martina', 'Truc', 'Ahlaam', 'Price'],
+			cardSets: [],
+			pendingCardSets: []
+		}
+
+		var updates = {};
+		updates['teacher-classes/' + this.props.currentUser.uid + "/" + newClassID] = newClass;
+		firebase.database().ref().update(updates);
+
+
+	},
 	addSampleData: function(){
 		var today = new Date();
 		var message = {
@@ -31806,7 +31825,7 @@ var dashboard = React.createClass({displayName: "dashboard",
 					React.createElement("h3", null, "Recent Translations"), 
 					activityView	
 				), 
-				React.createElement("button", {className: "btn btn-default", onClick: this.addSampleData}, "Add Sample Data")
+				React.createElement("button", {className: "btn btn-default", onClick: this.addSampleClass}, "Add Sample Class Data")
 			)
 		);
 	}

@@ -49,22 +49,43 @@ var dashboard = React.createClass({
 			that.props.onChange(details);
 		});
 	},
-	addSampleData: function(){
-		var today = new Date();
-		var message = {
-			date: today.toDateString(),
-			untranslated: 'hello world',
-			direction: 'en-es',
-			translated: 'hola mundo'
+	// addSampleData: function(){
+	// 	var today = new Date();
+	// 	var message = {
+	// 		date: today.toDateString(),
+	// 		untranslated: 'hello world',
+	// 		direction: 'en-es',
+	// 		translated: 'hola mundo'
+	// 	}
+
+	// 	var newPostKey = firebase.database().ref().child('user-messages/' + this.props.currentUser.uid).push().key;
+	// 	console.log(newPostKey);
+
+	// 	var updates = {};
+	// 	updates['user-messages/' + this.props.currentUser.uid + '/' + newPostKey] = message;
+	// 	firebase.database().ref().update(updates);
+	// },
+
+
+	addSampleClass: function(){
+		//create a new class id 
+		console.log("adding a new teacher-class!");
+		var newClassID = firebase.database().ref.child('teacher-classes/' + this.props.currentUser.uid).push();
+
+		var newClass = {
+			name: 'Spanish 101',
+			//temp: using names for now until sample student accounts created. 
+			students: ['Ava', 'Grace', 'Alan'],
+			cardSets: [],
+			pendingCardSets[]
 		}
 
-		var newPostKey = firebase.database().ref().child('user-messages/' + this.props.currentUser.uid).push().key;
-		console.log(newPostKey);
-
 		var updates = {};
-		updates['user-messages/' + this.props.currentUser.uid + '/' + newPostKey] = message;
+		updates['teacher-classes/' + this.props.currentUser.uid + "/" + newClassID] = newClass;
 		firebase.database().ref().update(updates);
 	},
+
+
 	render: function(){
 		var activityView;
 		var cardDeck;
@@ -102,10 +123,22 @@ var dashboard = React.createClass({
 					<h3>Recent Translations</h3>
 					{activityView}	
 				</div>
-				<button className="btn btn-default" onClick={this.addSampleData}>Add Sample Data</button>
+				<button className="btn btn-default" onClick={this.addSampleClass}>Add Sample Class</button>
 			</div>
 		);
 	}
 });
+
+
+function makeid(size)
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < size; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
 
 module.exports = dashboard;
