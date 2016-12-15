@@ -31765,9 +31765,10 @@ var dashboard = React.createClass({displayName: "dashboard",
 		var newClassID = firebase.database().ref().child('teacher-classes/' + this.props.currentUser.uid).push().key;
 
 		var newClass = {
-			name: 'English 250',
+			name: 'English 400',
 			//temp: using names for now until sample student accounts created. 
-			students: ['Martina', 'Truc', 'Ahlaam', 'Price'],
+			students: ["Sam", "Georgette"],
+			studentIds: ["//student id one goes here", "//studend id two goes here"],
 			cardSets: [],
 			pendingCardSets: []
 		}
@@ -31777,6 +31778,71 @@ var dashboard = React.createClass({displayName: "dashboard",
 		firebase.database().ref().update(updates);
 
 
+	},
+	getUserClasses: function(){
+		console.log("Retrieving teacher classes....");
+		// var classes = firebase.database.
+		var userClasses;
+		var that = this;
+		var classesRef = firebase.database().ref('/teacher-classes/' + this.props.currentUser.uid);
+		classesRef.once('value').then(function(snapshot) { //get intial details
+			userClasses = snapshot.val();
+			console.dir(userClasses);
+			that.setState({userClasses: userClasses});
+		});
+	},
+	addSampleStudent: function(studentName, classTitle){
+		studentName = "Hawi";
+		classTitle = "English 210";
+		console.log("adding Hawi to English 210....");
+		console.log(this.state.userClasses);
+		var classes = this.state.userClasses;
+		for (cls in classes){
+			var currentClass = classes[cls];
+			if (currentClass.name === classTitle){
+				currentClass.students.push(studentName);
+			}
+		}
+
+		var updates = {};
+		updates['teacher-classes/' + this.props.currentUser.uid + "/"] = classes;
+		firebase.database().ref().update(updates);
+		this.setState({userClasses: classes});
+		console.log("student added.");
+	},
+	getStudentActivity: function(){
+		var current; 
+		var classObj = this.state.userClasses;
+		for (classId in classObj){
+			if (classObj[classId].name === "English 400"){
+				console.log("found correct class");
+				current = classObj[classId];
+			}
+		}
+		this.setState({studentMessages: {}});
+		for (var i = 0; i < current.students.length; i++){
+			var studentName = current.students[i];
+			var studentid = current.studentIds[i];
+			console.log("loading data for student:" + studentName);
+			this.getStudentMessages(studentName, studentid);
+		}
+	},
+	getStudentMessages: function(studentName, studentId){
+		var that = this;
+		firebase.database().ref('/user-messages/' + studentId).on('child_added', function(data) {
+			var messages = that.state.studentMessages[studentName] == null? [] : that.state.studentMessages[studentName];
+			messages.push(data.val());
+			var studentMessages = that.state.studentMessages;
+			studentMessages[studentName] = messages;
+			that.setState({studentMessages: studentMessages});
+		});
+	},
+	showStudentActivity: function(){
+		var studentMessages = this.state.studentMessages;
+		for (student in studentMessages){
+			console.log(student);
+			console.dir(studentMessages[student]);
+		}
 	},
 	addSampleData: function(){
 		var today = new Date();
@@ -31825,7 +31891,12 @@ var dashboard = React.createClass({displayName: "dashboard",
 					React.createElement("h3", null, "Recent Translations"), 
 					activityView	
 				), 
-				React.createElement("button", {className: "btn btn-default", onClick: this.addSampleClass}, "Add Sample Class Data")
+				React.createElement("button", {className: "btn btn-default", onClick: this.addSampleData}, "Add Sample Translation Data"), 
+				React.createElement("button", {className: "btn btn-default", onClick: this.addSampleClass}, "Add Sample Class Data"), 
+				React.createElement("button", {className: "btn btn-default", onClick: this.getUserClasses}, "Get User Classes"), 
+				React.createElement("button", {className: "btn btn-default", onClick: this.addSampleStudent}, "Add Sample Student"), 
+				React.createElement("button", {className: "btn btn-default", onClick: this.getStudentActivity}, "Get Student Activity"), 
+				React.createElement("button", {className: "btn btn-default", onClick: this.showStudentActivity}, "Display Student Activity")
 			)
 		);
 	}
@@ -31967,11 +32038,14 @@ var UserDataForm = React.createClass({displayName: "UserDataForm",
 	handleSubmit: function(e){
 		e.preventDefault();
 		var self = this;
+		// var isTeacher = this.refs.isTeacher.value;
+		// console.log(isTeacher);
 		firebase.database().ref('users/' + this.props.currentUser.uid).set({
 		    userName: self.refs.name.value,
 		    phone: self.refs.phone.value,
 		    defaultFrom: self.refs.fromLanguage.value,
-		    defaultTo: self.refs.toLanguage.value 
+		    defaultTo: self.refs.toLanguage.value,
+		    role: "student" 
 		}) .then(function(result){
 			console.log('successfully saved data');
 			self.context.router.replace('/dashboard'); //re-route to account setup
@@ -31982,6 +32056,9 @@ var UserDataForm = React.createClass({displayName: "UserDataForm",
 	},
 	createLangItem: function(item, index){
 		return React.createElement("option", {key: index, value: item.langCode}, item.langName)
+	},
+	radioChange: function(){
+		console.log("heard change");
 	},
 	render: function(){
 		var error = this.state.error? React.createElement("p", null, "this.state.error") : '';
@@ -32011,6 +32088,11 @@ var UserDataForm = React.createClass({displayName: "UserDataForm",
 							this.state.languages.map(this.createLangItem)
 						)
 					), 
+					React.createElement("div", {className: "form-group"}, 
+						React.createElement("label", null, "(Optional) Special Roles:"), React.createElement("br", null), 
+					    React.createElement("input", {type: "radio", ref: "isTeacher", onChange: this.radioChange}), "Teacher ", React.createElement("br", null), 
+				        React.createElement("input", {type: "radio", ref: "isStudent", onChange: this.radioChange}), "Student"
+				  	), 
 					error, 
 					React.createElement("button", {type: "submit", className: "btn btn-primary"}, "Save Preferences"), 
 					React.createElement("h4", null, "Want to learn more about how preferences work? ", React.createElement(Link, {to: "/about"}, "Click here for more information."))

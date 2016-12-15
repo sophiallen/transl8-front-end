@@ -19,11 +19,14 @@ var UserDataForm = React.createClass({
 	handleSubmit: function(e){
 		e.preventDefault();
 		var self = this;
+		// var isTeacher = this.refs.isTeacher.value;
+		// console.log(isTeacher);
 		firebase.database().ref('users/' + this.props.currentUser.uid).set({
 		    userName: self.refs.name.value,
 		    phone: self.refs.phone.value,
 		    defaultFrom: self.refs.fromLanguage.value,
-		    defaultTo: self.refs.toLanguage.value 
+		    defaultTo: self.refs.toLanguage.value,
+		    role: "student" 
 		}) .then(function(result){
 			console.log('successfully saved data');
 			self.context.router.replace('/dashboard'); //re-route to account setup
@@ -34,6 +37,9 @@ var UserDataForm = React.createClass({
 	},
 	createLangItem: function(item, index){
 		return <option key={index} value={item.langCode}>{item.langName}</option>
+	},
+	radioChange: function(){
+		console.log("heard change");
 	},
 	render: function(){
 		var error = this.state.error? <p>this.state.error</p> : '';
@@ -63,6 +69,11 @@ var UserDataForm = React.createClass({
 							{this.state.languages.map(this.createLangItem)}
 						</select>
 					</div>
+					<div className="form-group">
+						<label>(Optional) Special Roles:</label><br/>
+					    <input type="radio" ref="isTeacher" onChange={this.radioChange}/>Teacher <br/>
+				        <input type="radio" ref="isStudent" onChange={this.radioChange}/>Student
+				  	</div>
 					{error}
 					<button type="submit" className="btn btn-primary">Save Preferences</button>
 					<h4>Want to learn more about how preferences work? <Link to="/about">Click here for more information.</Link></h4>
